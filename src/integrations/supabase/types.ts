@@ -294,6 +294,146 @@ export type Database = {
         }
         Relationships: []
       }
+      planting_areas: {
+        Row: {
+          area_hectares: number | null
+          cor: string
+          created_at: string
+          cultura: string
+          id: string
+          nome: string
+          observacoes: string | null
+          polygon_coords: Json
+          producao_historica: Json | null
+          property_id: string
+          safra_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          area_hectares?: number | null
+          cor?: string
+          created_at?: string
+          cultura: string
+          id?: string
+          nome: string
+          observacoes?: string | null
+          polygon_coords: Json
+          producao_historica?: Json | null
+          property_id: string
+          safra_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          area_hectares?: number | null
+          cor?: string
+          created_at?: string
+          cultura?: string
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          polygon_coords?: Json
+          producao_historica?: Json | null
+          property_id?: string
+          safra_id?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "planting_areas_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      properties: {
+        Row: {
+          area_total: number | null
+          created_at: string
+          endereco: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          nome: string
+          observacoes: string | null
+          updated_at: string
+        }
+        Insert: {
+          area_total?: number | null
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nome: string
+          observacoes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area_total?: number | null
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          nome?: string
+          observacoes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      routes: {
+        Row: {
+          created_at: string
+          destino_property_id: string | null
+          distancia_km: number | null
+          id: string
+          nome: string
+          observacoes: string | null
+          origem_property_id: string | null
+          route_coords: Json | null
+          tempo_estimado: number | null
+        }
+        Insert: {
+          created_at?: string
+          destino_property_id?: string | null
+          distancia_km?: number | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          origem_property_id?: string | null
+          route_coords?: Json | null
+          tempo_estimado?: number | null
+        }
+        Update: {
+          created_at?: string
+          destino_property_id?: string | null
+          distancia_km?: number | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          origem_property_id?: string | null
+          route_coords?: Json | null
+          tempo_estimado?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routes_destino_property_id_fkey"
+            columns: ["destino_property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routes_origem_property_id_fkey"
+            columns: ["origem_property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_reports: {
         Row: {
           configuracao: Json

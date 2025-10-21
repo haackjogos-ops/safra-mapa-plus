@@ -1,31 +1,86 @@
+import { useEffect, useState } from "react";
 import Header from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { MapPin, Plus, Search, Edit, Map } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import MapComponent from "@/components/propriedades/MapComponent";
+import AddPlantingAreaDialog from "@/components/propriedades/AddPlantingAreaDialog";
 
 const Propriedades = () => {
-  const [mapApiKey, setMapApiKey] = useState("");
-  const [showMap, setShowMap] = useState(false);
+  const [properties, setProperties] = useState<any[]>([]);
+  const [plantingAreas, setPlantingAreas] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [drawingMode, setDrawingMode] = useState(false);
+  const [currentPolygon, setCurrentPolygon] = useState<google.maps.Polygon | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const propriedades = [
-    { id: 1, nome: "Fazenda São João", area: "500 ha", localizacao: "São Paulo, SP", culturas: 4 },
-    { id: 2, nome: "Sítio Vale Verde", area: "150 ha", localizacao: "Paraná, PR", culturas: 2 },
-    { id: 3, nome: "Chácara Bela Vista", area: "80 ha", localizacao: "Minas Gerais, MG", culturas: 3 },
-  ];
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const handleLoadMap = () => {
-    if (mapApiKey.trim()) {
-      setShowMap(true);
+  const loadData = async () => {
+    await Promise.all([loadProperties(), loadPlantingAreas()]);
+  };
+
+  const loadProperties = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("properties")
+        .select("*")
+        .order("nome");
+
+      if (error) throw error;
+      setProperties(data || []);
+      
+      if (data && data.length > 0) {
+        setSelectedProperty(data[0].id);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar propriedades:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao carregar propriedades.",
+        variant: "destructive"
+      });
     }
+  };
+
+  const loadPlantingAreas = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("planting_areas")
+        .select("*");
+
+      if (error) throw error;
+      setPlantingAreas(data || []);
+    } catch (error) {
+      console.error("Erro ao carregar áreas:", error);
+    }
+  };
+
+  const filteredProperties = properties.filter(p =>
+    p.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleDrawComplete = (polygon: google.maps.Polygon) => {
+    setCurrentPolygon(polygon);
+    setDrawingMode(false);
+  };
+
+  const handleAreaAdded = () => {
+    setCurrentPolygon(null);
+    loadPlantingAreas();
   };
 
   return (
     <div className="min-h-screen">
       <Header 
         title="Propriedades" 
-        subtitle="Gerencie suas propriedades e áreas de cultivo"
+        subtitle="Gerencie suas propriedades e áreas de plantio"
       />
       
       <div className="p-6 space-y-6">
@@ -37,59 +92,37 @@ const Propriedades = () => {
               type="search"
               placeholder="Buscar propriedade..."
               className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Propriedade
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant={drawingMode ? "default" : "outline"}
+              onClick={() => setDrawingMode(!drawingMode)}
+              className="gap-2"
+            >
+              <Edit className="h-4 w-4" />
+              {drawingMode ? "Cancelar Desenho" : "Desenhar Área"}
+            </Button>
+          </div>
         </div>
 
         {/* Map Section */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Mapa de Propriedades
+              <Map className="h-5 w-5" />
+              Mapa de Propriedades e Áreas de Plantio
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {!showMap ? (
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Para visualizar o mapa interativo das suas propriedades, insira sua chave de API do Google Maps:
-                </p>
-                <div className="flex gap-3">
-                  <Input
-                    type="text"
-                    placeholder="Cole aqui sua API Key do Google Maps"
-                    value={mapApiKey}
-                    onChange={(e) => setMapApiKey(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button onClick={handleLoadMap}>Carregar Mapa</Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Obtenha sua chave em:{" "}
-                  <a 
-                    href="https://developers.google.com/maps/documentation/javascript/get-api-key" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Google Maps Platform
-                  </a>
-                </p>
-              </div>
-            ) : (
-              <div className="h-[400px] rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                <div className="text-center space-y-2">
-                  <MapPin className="h-12 w-12 mx-auto text-primary" />
-                  <p className="text-sm font-medium">Mapa será carregado aqui</p>
-                  <p className="text-xs text-muted-foreground">Com integração do Google Maps</p>
-                </div>
-              </div>
-            )}
+            <MapComponent
+              properties={properties}
+              plantingAreas={plantingAreas}
+              drawingMode={drawingMode}
+              onDrawComplete={handleDrawComplete}
+            />
           </CardContent>
         </Card>
 
@@ -97,35 +130,106 @@ const Propriedades = () => {
         <div>
           <h3 className="text-lg font-semibold text-foreground mb-4">Suas Propriedades</h3>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {propriedades.map((prop) => (
-              <Card key={prop.id} className="hover:shadow-lg transition-shadow duration-300">
-                <CardHeader>
-                  <CardTitle className="text-lg">{prop.nome}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Área Total:</span>
-                    <span className="font-semibold text-foreground">{prop.area}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Localização:</span>
-                    <span className="font-medium text-foreground">{prop.localizacao}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Culturas:</span>
-                    <span className="font-medium text-primary">{prop.culturas} ativas</span>
-                  </div>
-                  <div className="pt-3 border-t border-border">
-                    <Button variant="outline" className="w-full" size="sm">
-                      Ver Detalhes
-                    </Button>
+            {filteredProperties.map((prop) => {
+              const areas = plantingAreas.filter(a => a.property_id === prop.id);
+              const totalAreaPlantio = areas.reduce((sum, a) => sum + parseFloat(a.area_hectares || 0), 0);
+
+              return (
+                <Card key={prop.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">{prop.nome}</CardTitle>
+                        {prop.endereco && (
+                          <p className="text-sm text-muted-foreground mt-1">{prop.endereco}</p>
+                        )}
+                      </div>
+                      <MapPin className="h-5 w-5 text-primary" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Área Total:</span>
+                      <span className="font-semibold text-foreground">{prop.area_total} ha</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Áreas de Plantio:</span>
+                      <span className="font-medium text-primary">{areas.length} áreas</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Área Cultivada:</span>
+                      <span className="font-medium text-foreground">{totalAreaPlantio.toFixed(1)} ha</span>
+                    </div>
+                    {prop.observacoes && (
+                      <p className="text-xs text-muted-foreground pt-2 border-t border-border">
+                        {prop.observacoes}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+
+            {filteredProperties.length === 0 && (
+              <Card className="col-span-full">
+                <CardContent className="py-12">
+                  <div className="text-center space-y-2">
+                    <MapPin className="h-12 w-12 mx-auto text-muted-foreground" />
+                    <p className="text-muted-foreground">Nenhuma propriedade encontrada.</p>
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
         </div>
+
+        {/* Planting Areas List */}
+        {plantingAreas.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold text-foreground mb-4">Áreas de Plantio</h3>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {plantingAreas.map((area) => (
+                <Card key={area.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <div 
+                        className="w-4 h-4 rounded-full border border-border" 
+                        style={{ backgroundColor: area.cor }}
+                      />
+                      {area.nome}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Cultura:</span>
+                      <span className="font-semibold text-foreground">{area.cultura}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Área:</span>
+                      <span className="font-medium text-primary">{parseFloat(area.area_hectares || 0).toFixed(2)} ha</span>
+                    </div>
+                    {area.observacoes && (
+                      <p className="text-xs text-muted-foreground pt-2 border-t border-border">
+                        {area.observacoes}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Dialog para adicionar área */}
+      {currentPolygon && selectedProperty && (
+        <AddPlantingAreaDialog
+          propertyId={selectedProperty}
+          polygon={currentPolygon}
+          onAreaAdded={handleAreaAdded}
+          onClose={() => setCurrentPolygon(null)}
+        />
+      )}
     </div>
   );
 };
