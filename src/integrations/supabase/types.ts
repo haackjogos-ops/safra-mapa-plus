@@ -219,6 +219,111 @@ export type Database = {
         }
         Relationships: []
       }
+      harvest_forecasts: {
+        Row: {
+          created_at: string
+          custo_total_estimado: number | null
+          data_previsao: string
+          id: string
+          lucro_estimado: number | null
+          observacoes: string | null
+          producao_estimada: number
+          receita_estimada: number | null
+          safra_id: number
+          unidade: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          custo_total_estimado?: number | null
+          data_previsao: string
+          id?: string
+          lucro_estimado?: number | null
+          observacoes?: string | null
+          producao_estimada: number
+          receita_estimada?: number | null
+          safra_id: number
+          unidade?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          custo_total_estimado?: number | null
+          data_previsao?: string
+          id?: string
+          lucro_estimado?: number | null
+          observacoes?: string | null
+          producao_estimada?: number
+          receita_estimada?: number | null
+          safra_id?: number
+          unidade?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      market_prices: {
+        Row: {
+          created_at: string
+          cultura: string
+          data_referencia: string
+          fonte: string | null
+          id: string
+          observacoes: string | null
+          preco_medio: number
+          unidade: string
+        }
+        Insert: {
+          created_at?: string
+          cultura: string
+          data_referencia: string
+          fonte?: string | null
+          id?: string
+          observacoes?: string | null
+          preco_medio: number
+          unidade?: string
+        }
+        Update: {
+          created_at?: string
+          cultura?: string
+          data_referencia?: string
+          fonte?: string | null
+          id?: string
+          observacoes?: string | null
+          preco_medio?: number
+          unidade?: string
+        }
+        Relationships: []
+      }
+      saved_reports: {
+        Row: {
+          configuracao: Json
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          configuracao: Json
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          configuracao?: Json
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       task_notifications: {
         Row: {
           created_at: string
@@ -310,6 +415,25 @@ export type Database = {
           saldo: number
           total_despesas: number
           total_receitas: number
+        }[]
+      }
+      get_annual_comparison: {
+        Args: { year_end: number; year_start: number }
+        Returns: {
+          ano: number
+          lucro: number
+          num_transacoes: number
+          total_despesas: number
+          total_receitas: number
+        }[]
+      }
+      get_quarterly_comparison: {
+        Args: { year_param: number }
+        Returns: {
+          lucro: number
+          total_despesas: number
+          total_receitas: number
+          trimestre: number
         }[]
       }
       update_overdue_tasks: {
