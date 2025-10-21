@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Propriedades from "./pages/Propriedades";
 import Safras from "./pages/Safras";
 import Tarefas from "./pages/Tarefas";
+import Agronomo from "./pages/Agronomo";
 import Relatorios from "./pages/Relatorios";
 import Insumos from "./pages/Insumos";
 import Financeiro from "./pages/Financeiro";
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/propriedades" element={<Propriedades />} />
               <Route path="/safras" element={<Safras />} />
               <Route path="/tarefas" element={<Tarefas />} />
+              <Route path="/agronomo" element={<Agronomo />} />
               <Route path="/relatorios" element={<Relatorios />} />
               <Route path="/insumos" element={<Insumos />} />
               <Route path="/financeiro" element={<Financeiro />} />
