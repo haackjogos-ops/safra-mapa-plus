@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Save } from "lucide-react";
+import { CalendarIcon, Save, Cloud } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,12 +53,49 @@ const ApplicationForm = ({
   const [endTime, setEndTime] = useState("");
   const [selectedOperator, setSelectedOperator] = useState("");
   const [selectedEquipment, setSelectedEquipment] = useState("");
+  const [city, setCity] = useState("");
   const [temperature, setTemperature] = useState("");
   const [humidity, setHumidity] = useState("");
   const [windSpeed, setWindSpeed] = useState("");
   const [applicationCost, setApplicationCost] = useState("");
   const [observations, setObservations] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: weatherData, refetch: refetchWeather, isFetching: isFetchingWeather } = useQuery({
+    queryKey: ["weather-current", city],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("get-weather-data", {
+        body: { city }
+      });
+      if (error) throw error;
+      return data;
+    },
+    enabled: false
+  });
+
+  const fetchWeatherData = async () => {
+    if (!city) {
+      toast({
+        title: "Cidade não informada",
+        description: "Digite o nome da cidade para buscar dados climáticos.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const { data } = await refetchWeather();
+    
+    if (data?.current) {
+      setTemperature(data.current.temp.toString());
+      setHumidity(data.current.humidity.toString());
+      setWindSpeed((data.current.wind_speed * 3.6).toFixed(1)); // Convert m/s to km/h
+      
+      toast({
+        title: "Dados climáticos atualizados",
+        description: `Dados de ${city} carregados com sucesso.`
+      });
+    }
+  };
 
   const saveApplication = async () => {
     if (!selectedProduct || !selectedArea || !applicationArea || !productDosage) {
@@ -215,41 +253,66 @@ const ApplicationForm = ({
 
         <div className="border-t pt-4">
           <h4 className="font-medium mb-3">Condições Climáticas</h4>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="temperature">Temperatura (°C)</Label>
-              <Input
-                id="temperature"
-                type="number"
-                step="0.1"
-                placeholder="Ex: 22.5"
-                value={temperature}
-                onChange={(e) => setTemperature(e.target.value)}
-              />
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="city">Cidade</Label>
+                <Input
+                  id="city"
+                  placeholder="Ex: São Paulo"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                />
+              </div>
+              <div className="flex items-end">
+                <Button 
+                  type="button" 
+                  onClick={fetchWeatherData}
+                  disabled={isFetchingWeather || !city}
+                  variant="outline"
+                >
+                  <Cloud className="mr-2 h-4 w-4" />
+                  {isFetchingWeather ? "Buscando..." : "Buscar Clima"}
+                </Button>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="humidity">Umidade Relativa (%)</Label>
-              <Input
-                id="humidity"
-                type="number"
-                step="0.1"
-                placeholder="Ex: 65"
-                value={humidity}
-                onChange={(e) => setHumidity(e.target.value)}
-              />
-            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="temperature">Temperatura (°C)</Label>
+                <Input
+                  id="temperature"
+                  type="number"
+                  step="0.1"
+                  placeholder="Ex: 22.5"
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="windSpeed">Velocidade do Vento (km/h)</Label>
-              <Input
-                id="windSpeed"
-                type="number"
-                step="0.1"
-                placeholder="Ex: 8"
-                value={windSpeed}
-                onChange={(e) => setWindSpeed(e.target.value)}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="humidity">Umidade Relativa (%)</Label>
+                <Input
+                  id="humidity"
+                  type="number"
+                  step="0.1"
+                  placeholder="Ex: 65"
+                  value={humidity}
+                  onChange={(e) => setHumidity(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="windSpeed">Velocidade do Vento (km/h)</Label>
+                <Input
+                  id="windSpeed"
+                  type="number"
+                  step="0.1"
+                  placeholder="Ex: 8"
+                  value={windSpeed}
+                  onChange={(e) => setWindSpeed(e.target.value)}
+                />
+              </div>
             </div>
           </div>
         </div>
