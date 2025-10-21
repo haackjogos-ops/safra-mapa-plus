@@ -1,6 +1,8 @@
 import Header from "@/components/layout/Header";
 import StatCard from "@/components/dashboard/StatCard";
 import CultureCard from "@/components/dashboard/CultureCard";
+import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
+import { WeatherForecast } from "@/components/dashboard/WeatherForecast";
 import { Sprout, TrendingUp, DollarSign, Droplets } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -68,53 +70,11 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Weather and Quick Actions */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Tarefas Pendentes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                <li className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                  <span className="text-sm">Irrigação - Milho</span>
-                  <span className="text-xs text-muted-foreground">Hoje, 14:00</span>
-                </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                  <span className="text-sm">Aplicação - Soja</span>
-                  <span className="text-xs text-muted-foreground">Amanhã, 08:00</span>
-                </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                  <span className="text-sm">Colheita - Fumo</span>
-                  <span className="text-xs text-muted-foreground">Em 2 dias</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Alertas Climáticos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-2 rounded-lg bg-secondary/10">
-                  <span className="text-2xl">☀️</span>
-                  <div>
-                    <p className="text-sm font-medium">Sol Intenso</p>
-                    <p className="text-xs text-muted-foreground">Próximos 3 dias - 32°C</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-2 rounded-lg bg-primary/10">
-                  <span className="text-2xl">🌧️</span>
-                  <div>
-                    <p className="text-sm font-medium">Chuva Prevista</p>
-                    <p className="text-xs text-muted-foreground">Sexta-feira - 15mm</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <WeatherWidget city="São Paulo" />
+          
+          <WeatherForecast city="São Paulo" />
 
           <Card>
             <CardHeader>

@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.search-market-prices]
 verify_jwt = false
+
+[functions.get-weather-data]
+verify_jwt = false
