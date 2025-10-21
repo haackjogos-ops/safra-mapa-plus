@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import MapComponent from "@/components/propriedades/MapComponent";
 import AddPlantingAreaDialog from "@/components/propriedades/AddPlantingAreaDialog";
+import DeletePropertyButton from "@/components/propriedades/DeletePropertyButton";
 
 const Propriedades = () => {
   const [properties, setProperties] = useState<any[]>([]);
@@ -165,6 +166,14 @@ const Propriedades = () => {
                         {prop.observacoes}
                       </p>
                     )}
+                    
+                    <div className="pt-3 border-t border-border">
+                      <DeletePropertyButton
+                        property={prop}
+                        plantingAreasCount={areas.length}
+                        onDeleted={loadData}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               );
