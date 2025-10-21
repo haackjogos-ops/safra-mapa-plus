@@ -4,14 +4,38 @@ import CultureCard from "@/components/dashboard/CultureCard";
 import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { WeatherForecast } from "@/components/dashboard/WeatherForecast";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sprout, TrendingUp, DollarSign, Droplets, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
-  const [city, setCity] = useState("São Paulo");
-  const [searchCity, setSearchCity] = useState("São Paulo");
+  const [city, setCity] = useState(() => {
+    return localStorage.getItem("selectedCity") || "São Paulo";
+  });
+  const [searchCity, setSearchCity] = useState(() => {
+    return localStorage.getItem("selectedCity") || "São Paulo";
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedCity = localStorage.getItem("selectedCity");
+      if (savedCity) {
+        setCity(savedCity);
+        setSearchCity(savedCity);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    
+    // Verificar mudanças a cada segundo (fallback para quando storage event não dispara)
+    const interval = setInterval(handleStorageChange, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
   
   const cultures = [
     { name: "Soja", area: "150 hectares", status: "Crescimento", progress: 65, nextTask: "Aplicação de defensivos", image: "🌱" },

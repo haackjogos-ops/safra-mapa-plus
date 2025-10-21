@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Map, Sprout, ClipboardList, BarChart3, Package, DollarSign, Tractor, Beaker } from "lucide-react";
+import { Home, Map, Sprout, ClipboardList, BarChart3, Package, DollarSign, Tractor, Beaker, Cloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -8,6 +8,7 @@ const navigation = [
   { name: "Safras", href: "/safras", icon: Sprout },
   { name: "Tarefas", href: "/tarefas", icon: ClipboardList },
   { name: "Agrônomo", href: "/agronomo", icon: Beaker },
+  { name: "Clima", href: "/clima", icon: Cloud },
   { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
   { name: "Insumos", href: "/insumos", icon: Package },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
