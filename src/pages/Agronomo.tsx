@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Tractor, Plane, Beaker, Map as MapIcon, Calculator } from "lucide-react";
+import { Tractor, Plane, Beaker, Map as MapIcon, Calculator, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import ApplicationForm from "@/components/agronomo/ApplicationForm";
+import ApplicationHistory from "@/components/agronomo/ApplicationHistory";
+import ApplicationReports from "@/components/agronomo/ApplicationReports";
 
 interface Supply {
   id: string;
@@ -30,6 +32,8 @@ const Agronomo = () => {
   const [equipmentType, setEquipmentType] = useState<"trator" | "drone">("trator");
   const [supplies, setSupplies] = useState<Supply[]>([]);
   const [plantingAreas, setPlantingAreas] = useState<PlantingArea[]>([]);
+  const [operators, setOperators] = useState<any[]>([]);
+  const [equipment, setEquipment] = useState<any[]>([]);
   const { toast } = useToast();
 
   // Dados do equipamento
@@ -71,16 +75,22 @@ const Agronomo = () => {
 
   const loadData = async () => {
     try {
-      const [suppliesResult, areasResult] = await Promise.all([
+      const [suppliesResult, areasResult, operatorsResult, equipmentResult] = await Promise.all([
         supabase.from("supplies").select("*").order("nome"),
-        supabase.from("planting_areas").select("*").order("nome")
+        supabase.from("planting_areas").select("*").order("nome"),
+        supabase.from("operadores").select("*").eq("status", "ativo").order("nome"),
+        supabase.from("equipamentos").select("*").eq("status", "disponivel").order("nome")
       ]);
 
       if (suppliesResult.error) throw suppliesResult.error;
       if (areasResult.error) throw areasResult.error;
+      if (operatorsResult.error) throw operatorsResult.error;
+      if (equipmentResult.error) throw equipmentResult.error;
 
       setSupplies(suppliesResult.data || []);
       setPlantingAreas(areasResult.data || []);
+      setOperators(operatorsResult.data || []);
+      setEquipment(equipmentResult.data || []);
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
       toast({
@@ -182,11 +192,13 @@ const Agronomo = () => {
         </Card>
 
         <Tabs defaultValue="produto" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="produto">Produto</TabsTrigger>
             <TabsTrigger value="equipamento">Equipamento</TabsTrigger>
             <TabsTrigger value="area">Área</TabsTrigger>
             <TabsTrigger value="calculo">Cálculo</TabsTrigger>
+            <TabsTrigger value="registro">Registrar</TabsTrigger>
+            <TabsTrigger value="historico">Histórico</TabsTrigger>
           </TabsList>
 
           {/* Aba Produto */}
@@ -436,6 +448,34 @@ const Agronomo = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Aba Registro */}
+          <TabsContent value="registro">
+            <ApplicationForm
+              equipmentType={equipmentType}
+              supplies={supplies}
+              plantingAreas={plantingAreas}
+              operators={operators}
+              equipment={equipment}
+              calculationResults={calculationResults}
+              selectedProduct={selectedProduct}
+              selectedArea={selectedArea}
+              applicationArea={applicationArea}
+              productDosage={productDosage}
+              onSuccess={() => {
+                resetForm();
+                loadData();
+              }}
+            />
+          </TabsContent>
+
+          {/* Aba Histórico */}
+          <TabsContent value="historico">
+            <div className="space-y-6">
+              <ApplicationHistory />
+              <ApplicationReports />
+            </div>
           </TabsContent>
         </Tabs>
       </div>

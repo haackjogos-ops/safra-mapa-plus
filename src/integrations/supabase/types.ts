@@ -14,6 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          application_cost: number | null
+          application_date: string
+          area_applied: number
+          created_at: string
+          end_time: string | null
+          equipment_id: string | null
+          equipment_type: string
+          id: string
+          observations: string | null
+          operator_id: string | null
+          planting_area_id: string
+          product_dosage: number
+          start_time: string | null
+          supply_id: string
+          total_product_used: number
+          total_spray_volume: number
+          updated_at: string
+          weather_humidity: number | null
+          weather_temperature: number | null
+          weather_wind_speed: number | null
+        }
+        Insert: {
+          application_cost?: number | null
+          application_date: string
+          area_applied: number
+          created_at?: string
+          end_time?: string | null
+          equipment_id?: string | null
+          equipment_type: string
+          id?: string
+          observations?: string | null
+          operator_id?: string | null
+          planting_area_id: string
+          product_dosage: number
+          start_time?: string | null
+          supply_id: string
+          total_product_used: number
+          total_spray_volume: number
+          updated_at?: string
+          weather_humidity?: number | null
+          weather_temperature?: number | null
+          weather_wind_speed?: number | null
+        }
+        Update: {
+          application_cost?: number | null
+          application_date?: string
+          area_applied?: number
+          created_at?: string
+          end_time?: string | null
+          equipment_id?: string | null
+          equipment_type?: string
+          id?: string
+          observations?: string | null
+          operator_id?: string | null
+          planting_area_id?: string
+          product_dosage?: number
+          start_time?: string | null
+          supply_id?: string
+          total_product_used?: number
+          total_spray_volume?: number
+          updated_at?: string
+          weather_humidity?: number | null
+          weather_temperature?: number | null
+          weather_wind_speed?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "operadores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_planting_area_id_fkey"
+            columns: ["planting_area_id"]
+            isOneToOne: false
+            referencedRelation: "planting_areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_supply_id_fkey"
+            columns: ["supply_id"]
+            isOneToOne: false
+            referencedRelation: "supplies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bank_statements: {
         Row: {
           arquivo_origem: string | null
