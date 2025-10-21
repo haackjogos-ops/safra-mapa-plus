@@ -20,6 +20,8 @@ import AddSupplyDialog from "@/components/insumos/AddSupplyDialog";
 import AddPurchaseDialog from "@/components/insumos/AddPurchaseDialog";
 import SupplyStockAlert from "@/components/insumos/SupplyStockAlert";
 import NFXmlUpload from "@/components/insumos/NFXmlUpload";
+import SupplyUsageForecast from "@/components/insumos/SupplyUsageForecast";
+import SupplierComparison from "@/components/insumos/SupplierComparison";
 import { format } from "date-fns";
 
 interface Supply {
@@ -177,6 +179,8 @@ const Insumos = () => {
           <TabsList>
             <TabsTrigger value="inventory">Estoque</TabsTrigger>
             <TabsTrigger value="purchases">Histórico de Compras</TabsTrigger>
+            <TabsTrigger value="forecast">Previsões</TabsTrigger>
+            <TabsTrigger value="suppliers">Fornecedores</TabsTrigger>
           </TabsList>
 
           <TabsContent value="inventory" className="space-y-4">
@@ -311,6 +315,14 @@ const Insumos = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="forecast">
+            <SupplyUsageForecast />
+          </TabsContent>
+
+          <TabsContent value="suppliers">
+            <SupplierComparison />
           </TabsContent>
         </Tabs>
       </div>

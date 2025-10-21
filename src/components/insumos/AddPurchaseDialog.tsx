@@ -47,22 +47,51 @@ const AddPurchaseDialog = ({ supplyId, supplyName, onPurchaseAdded }: AddPurchas
     try {
       const quantidade = parseFloat(formData.quantidade);
       const precoUnitario = parseFloat(formData.preco_unitario);
+      const valorTotal = quantidade * precoUnitario;
       
       // Inserir compra
-      const { error: purchaseError } = await supabase.from("supply_purchases").insert([
-        {
-          supply_id: supplyId,
-          data_compra: formData.data_compra,
-          quantidade,
-          preco_unitario: precoUnitario,
-          valor_total: quantidade * precoUnitario,
-          fornecedor: formData.fornecedor,
-          nota_fiscal: formData.nota_fiscal || null,
-          observacoes: formData.observacoes || null,
-        },
-      ]);
+      const { data: purchaseData, error: purchaseError } = await supabase
+        .from("supply_purchases")
+        .insert([
+          {
+            supply_id: supplyId,
+            data_compra: formData.data_compra,
+            quantidade,
+            preco_unitario: precoUnitario,
+            valor_total: valorTotal,
+            fornecedor: formData.fornecedor,
+            nota_fiscal: formData.nota_fiscal || null,
+            observacoes: formData.observacoes || null,
+          },
+        ])
+        .select()
+        .single();
 
       if (purchaseError) throw purchaseError;
+
+      // Registrar transação financeira automaticamente
+      const { error: financialError } = await supabase
+        .from("financial_transactions")
+        .insert([
+          {
+            tipo: "despesa",
+            categoria: "Insumos",
+            subcategoria: supplyName,
+            descricao: `Compra de ${supplyName} - ${formData.fornecedor}`,
+            valor: valorTotal,
+            data_transacao: formData.data_compra,
+            status: "pago",
+            forma_pagamento: "A definir",
+            observacoes: formData.nota_fiscal 
+              ? `NF: ${formData.nota_fiscal}${formData.observacoes ? ' - ' + formData.observacoes : ''}`
+              : formData.observacoes,
+          },
+        ]);
+
+      if (financialError) {
+        console.error("Erro ao registrar transação financeira:", financialError);
+        // Não falha a operação se apenas o registro financeiro falhar
+      }
 
       // Atualizar estoque
       const { data: currentSupply, error: fetchError } = await supabase
@@ -82,7 +111,7 @@ const AddPurchaseDialog = ({ supplyId, supplyName, onPurchaseAdded }: AddPurchas
 
       toast({
         title: "Compra registrada",
-        description: "A compra foi registrada e o estoque atualizado.",
+        description: "A compra foi registrada, o estoque atualizado e a despesa lançada no financeiro.",
       });
 
       setFormData({
