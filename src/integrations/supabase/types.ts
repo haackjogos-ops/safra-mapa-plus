@@ -14,13 +14,130 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      checklist_items: {
+        Row: {
+          concluido: boolean
+          created_at: string
+          id: string
+          ordem: number
+          task_id: string
+          titulo: string
+        }
+        Insert: {
+          concluido?: boolean
+          created_at?: string
+          id?: string
+          ordem?: number
+          task_id: string
+          titulo: string
+        }
+        Update: {
+          concluido?: boolean
+          created_at?: string
+          id?: string
+          ordem?: number
+          task_id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_items_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_notifications: {
+        Row: {
+          created_at: string
+          data_envio: string | null
+          enviada: boolean
+          id: string
+          task_id: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          data_envio?: string | null
+          enviada?: boolean
+          id?: string
+          task_id: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          data_envio?: string | null
+          enviada?: boolean
+          id?: string
+          task_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_notifications_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_conclusao: string | null
+          data_prevista: string
+          descricao: string | null
+          id: string
+          prioridade: string
+          responsavel: string | null
+          safra_id: number | null
+          status: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_conclusao?: string | null
+          data_prevista: string
+          descricao?: string | null
+          id?: string
+          prioridade: string
+          responsavel?: string | null
+          safra_id?: number | null
+          status?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_conclusao?: string | null
+          data_prevista?: string
+          descricao?: string | null
+          id?: string
+          prioridade?: string
+          responsavel?: string | null
+          safra_id?: number | null
+          status?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_overdue_tasks: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
