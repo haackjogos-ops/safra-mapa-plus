@@ -21,7 +21,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header
         title="Dashboard" 
         subtitle="Visão geral da sua produção agrícola"
