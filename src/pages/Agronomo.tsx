@@ -6,12 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tractor, Plane, Beaker, Map as MapIcon, Calculator, FileText } from "lucide-react";
+import { Tractor, Plane, Beaker, Map as MapIcon, Calculator, FileText, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ApplicationForm from "@/components/agronomo/ApplicationForm";
 import ApplicationHistory from "@/components/agronomo/ApplicationHistory";
 import ApplicationReports from "@/components/agronomo/ApplicationReports";
+import MapAreaSelector from "@/components/agronomo/MapAreaSelector";
 
 interface Supply {
   id: string;
@@ -326,58 +327,81 @@ const Agronomo = () => {
 
           {/* Aba Área */}
           <TabsContent value="area">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapIcon className="h-5 w-5" />
-                  Seleção de Área
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="area">Talhão*</Label>
-                    <Select value={selectedArea} onValueChange={setSelectedArea}>
-                      <SelectTrigger id="area">
-                        <SelectValue placeholder="Selecione o talhão" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {plantingAreas.map(area => (
-                          <SelectItem key={area.id} value={area.id}>
-                            {area.nome} - {area.cultura} ({area.area_hectares} ha)
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+            <div className="space-y-4">
+              <MapAreaSelector 
+                plantingAreas={plantingAreas}
+                selectedArea={selectedArea}
+                onAreaSelect={setSelectedArea}
+              />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MapIcon className="h-5 w-5" />
+                    Detalhes da Aplicação
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="area">Talhão*</Label>
+                      <Select value={selectedArea} onValueChange={setSelectedArea}>
+                        <SelectTrigger id="area">
+                          <SelectValue placeholder="Selecione o talhão" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {plantingAreas.map(area => (
+                            <SelectItem key={area.id} value={area.id}>
+                              {area.nome} - {area.cultura} ({area.area_hectares} ha)
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="areaSize">Área a Aplicar (hectares)*</Label>
+                      <Input
+                        id="areaSize"
+                        type="number"
+                        step="0.01"
+                        placeholder="Ex: 50.5"
+                        value={applicationArea}
+                        onChange={(e) => setApplicationArea(e.target.value)}
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="areaSize">Área a Aplicar (hectares)*</Label>
-                    <Input
-                      id="areaSize"
-                      type="number"
-                      step="0.01"
-                      placeholder="Ex: 50.5"
-                      value={applicationArea}
-                      onChange={(e) => setApplicationArea(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {selectedArea && (
-                  <div className="p-4 bg-muted rounded-lg">
-                    <h4 className="font-medium mb-2">Informações do Talhão</h4>
-                    {plantingAreas.filter(a => a.id === selectedArea).map(area => (
-                      <div key={area.id} className="space-y-1 text-sm">
-                        <p><span className="text-muted-foreground">Nome:</span> {area.nome}</p>
-                        <p><span className="text-muted-foreground">Cultura:</span> {area.cultura}</p>
-                        <p><span className="text-muted-foreground">Área Total:</span> {area.area_hectares} ha</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  {selectedArea && (
+                    <div className="p-4 bg-muted rounded-lg space-y-3">
+                      <h4 className="font-medium">Informações do Talhão Selecionado</h4>
+                      {plantingAreas.filter(a => a.id === selectedArea).map(area => (
+                        <div key={area.id} className="grid gap-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Nome:</span>
+                            <span className="font-medium">{area.nome}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Cultura:</span>
+                            <span className="font-medium">{area.cultura}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Área Total:</span>
+                            <span className="font-medium">{area.area_hectares} ha</span>
+                          </div>
+                          {parseFloat(applicationArea) > area.area_hectares && (
+                            <div className="flex items-center gap-2 text-destructive mt-2 p-2 bg-destructive/10 rounded">
+                              <AlertTriangle className="h-4 w-4" />
+                              <span className="text-xs">Área de aplicação maior que o talhão!</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Aba Cálculo */}
@@ -386,15 +410,38 @@ const Agronomo = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
-                  Cálculo de Calda
+                  Cálculo Interativo de Calda
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Resumo dos dados */}
+                <div className="grid gap-4 md:grid-cols-3 p-4 bg-muted rounded-lg">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Produto</p>
+                    <p className="font-medium text-sm">
+                      {selectedProduct ? supplies.find(s => s.id === selectedProduct)?.nome : "Não selecionado"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Área</p>
+                    <p className="font-medium text-sm">
+                      {applicationArea ? `${applicationArea} ha` : "Não informada"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Dosagem</p>
+                    <p className="font-medium text-sm">
+                      {productDosage ? `${productDosage} L/ha` : "Não informada"}
+                    </p>
+                  </div>
+                </div>
+
                 <div className="flex gap-2">
-                  <Button onClick={calculateSpray} className="flex-1">
+                  <Button onClick={calculateSpray} className="flex-1" size="lg">
+                    <Calculator className="mr-2 h-5 w-5" />
                     Calcular Calda
                   </Button>
-                  <Button variant="outline" onClick={resetForm}>
+                  <Button variant="outline" onClick={resetForm} size="lg">
                     Limpar
                   </Button>
                 </div>
@@ -402,47 +449,91 @@ const Agronomo = () => {
                 {calculationResults.totalSpray > 0 && (
                   <div className="space-y-4">
                     <div className="border-t pt-4">
-                      <h4 className="font-semibold mb-4">Resultados:</h4>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="p-4 bg-primary/10 rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Volume de Calda Total</p>
-                          <p className="text-2xl font-bold text-primary">{calculationResults.totalSpray} L</p>
+                      <h4 className="font-semibold mb-4 text-lg">Resultados do Cálculo</h4>
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg border-2 border-primary/20">
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Volume Total de Calda</p>
+                          <p className="text-3xl font-bold text-primary">{calculationResults.totalSpray}</p>
+                          <p className="text-sm text-muted-foreground mt-1">Litros</p>
                         </div>
 
-                        <div className="p-4 bg-primary/10 rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Quantidade de Produto</p>
-                          <p className="text-2xl font-bold text-primary">{calculationResults.productAmount} L</p>
+                        <div className="p-6 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg border-2 border-primary/20">
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Quantidade de Produto</p>
+                          <p className="text-3xl font-bold text-primary">{calculationResults.productAmount}</p>
+                          <p className="text-sm text-muted-foreground mt-1">Litros</p>
                         </div>
 
-                        <div className="p-4 bg-muted rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Quantidade de Água</p>
-                          <p className="text-2xl font-bold">{calculationResults.waterAmount} L</p>
+                        <div className="p-6 bg-muted rounded-lg border-2 border-border">
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Quantidade de Água</p>
+                          <p className="text-3xl font-bold">{calculationResults.waterAmount}</p>
+                          <p className="text-sm text-muted-foreground mt-1">Litros</p>
                         </div>
 
-                        <div className="p-4 bg-muted rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Abastecimentos Necessários</p>
-                          <p className="text-2xl font-bold">{calculationResults.trips}</p>
+                        <div className="p-6 bg-muted rounded-lg border-2 border-border">
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Taxa de Aplicação</p>
+                          <p className="text-3xl font-bold">{calculationResults.sprayPerHectare}</p>
+                          <p className="text-sm text-muted-foreground mt-1">L/ha</p>
                         </div>
 
-                        <div className="p-4 bg-muted rounded-lg md:col-span-2">
-                          <p className="text-sm text-muted-foreground mb-1">Taxa de Aplicação</p>
-                          <p className="text-2xl font-bold">{calculationResults.sprayPerHectare} L/ha</p>
+                        <div className="p-6 bg-accent/20 rounded-lg border-2 border-accent/30">
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Abastecimentos</p>
+                          <p className="text-3xl font-bold text-accent">{calculationResults.trips}</p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {calculationResults.trips === 1 ? 'vez' : 'vezes'}
+                          </p>
+                        </div>
+
+                        <div className="p-6 bg-muted rounded-lg border-2 border-border">
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Capacidade do Tanque</p>
+                          <p className="text-3xl font-bold">{tankCapacity || 0}</p>
+                          <p className="text-sm text-muted-foreground mt-1">Litros</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="border-t pt-4">
-                      <h4 className="font-semibold mb-2">Recomendações:</h4>
-                      <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                        <li>Verifique as condições climáticas antes da aplicação</li>
-                        <li>Temperatura ideal: 15-25°C</li>
-                        <li>Umidade relativa: acima de 55%</li>
-                        <li>Velocidade do vento: até 10 km/h</li>
-                        <li>Use EPIs adequados durante toda a aplicação</li>
-                        {equipmentType === "trator" && (
-                          <li>Verifique o estado dos bicos antes de iniciar</li>
-                        )}
-                      </ul>
+                    <div className="border-t pt-4 space-y-3">
+                      <h4 className="font-semibold">Recomendações Técnicas</h4>
+                      <div className="grid gap-3 md:grid-cols-2">
+                        <div className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg">
+                          <div className="h-2 w-2 rounded-full bg-primary mt-2"></div>
+                          <div>
+                            <p className="font-medium text-sm">Condições Climáticas</p>
+                            <p className="text-xs text-muted-foreground">
+                              Temperatura ideal: 15-25°C | Umidade: 60-90% | Vento: &lt; 10 km/h
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg">
+                          <div className="h-2 w-2 rounded-full bg-primary mt-2"></div>
+                          <div>
+                            <p className="font-medium text-sm">Horário de Aplicação</p>
+                            <p className="text-xs text-muted-foreground">
+                              Manhã (6h-10h) ou tarde (16h-19h) - evite horários de sol intenso
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg">
+                          <div className="h-2 w-2 rounded-full bg-primary mt-2"></div>
+                          <div>
+                            <p className="font-medium text-sm">Calibração</p>
+                            <p className="text-xs text-muted-foreground">
+                              Verifique a calibração do equipamento antes de iniciar
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg">
+                          <div className="h-2 w-2 rounded-full bg-primary mt-2"></div>
+                          <div>
+                            <p className="font-medium text-sm">Segurança</p>
+                            <p className="text-xs text-muted-foreground">
+                              Use EPIs adequados e respeite o período de carência
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
