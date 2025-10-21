@@ -24,7 +24,7 @@ const CultureCard = ({ name, area, status, progress, nextTask, image }: CultureC
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <div className="h-32 overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5">
+      <div className="h-32 overflow-hidden bg-muted/30">
         <div className="h-full w-full flex items-center justify-center text-6xl">
           {image}
         </div>
