@@ -464,6 +464,155 @@ export type Database = {
         }
         Relationships: []
       }
+      supplies: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_validade: string | null
+          estoque_minimo: number | null
+          fornecedor: string | null
+          fornecedor_contato: string | null
+          id: string
+          local_armazenamento: string | null
+          nome: string
+          observacoes: string | null
+          preco_unitario: number
+          quantidade_estoque: number
+          unidade_medida: string
+          updated_at: string
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_validade?: string | null
+          estoque_minimo?: number | null
+          fornecedor?: string | null
+          fornecedor_contato?: string | null
+          id?: string
+          local_armazenamento?: string | null
+          nome: string
+          observacoes?: string | null
+          preco_unitario: number
+          quantidade_estoque?: number
+          unidade_medida: string
+          updated_at?: string
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_validade?: string | null
+          estoque_minimo?: number | null
+          fornecedor?: string | null
+          fornecedor_contato?: string | null
+          id?: string
+          local_armazenamento?: string | null
+          nome?: string
+          observacoes?: string | null
+          preco_unitario?: number
+          quantidade_estoque?: number
+          unidade_medida?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      supply_purchases: {
+        Row: {
+          created_at: string
+          data_compra: string
+          fornecedor: string
+          id: string
+          nota_fiscal: string | null
+          observacoes: string | null
+          preco_unitario: number
+          quantidade: number
+          supply_id: string
+          valor_total: number
+        }
+        Insert: {
+          created_at?: string
+          data_compra: string
+          fornecedor: string
+          id?: string
+          nota_fiscal?: string | null
+          observacoes?: string | null
+          preco_unitario: number
+          quantidade: number
+          supply_id: string
+          valor_total: number
+        }
+        Update: {
+          created_at?: string
+          data_compra?: string
+          fornecedor?: string
+          id?: string
+          nota_fiscal?: string | null
+          observacoes?: string | null
+          preco_unitario?: number
+          quantidade?: number
+          supply_id?: string
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_purchases_supply_id_fkey"
+            columns: ["supply_id"]
+            isOneToOne: false
+            referencedRelation: "supplies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supply_usage: {
+        Row: {
+          created_at: string
+          data_uso: string
+          id: string
+          observacoes: string | null
+          planting_area_id: string | null
+          quantidade_usada: number
+          responsavel: string | null
+          safra_id: number | null
+          supply_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_uso: string
+          id?: string
+          observacoes?: string | null
+          planting_area_id?: string | null
+          quantidade_usada: number
+          responsavel?: string | null
+          safra_id?: number | null
+          supply_id: string
+        }
+        Update: {
+          created_at?: string
+          data_uso?: string
+          id?: string
+          observacoes?: string | null
+          planting_area_id?: string | null
+          quantidade_usada?: number
+          responsavel?: string | null
+          safra_id?: number | null
+          supply_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_usage_planting_area_id_fkey"
+            columns: ["planting_area_id"]
+            isOneToOne: false
+            referencedRelation: "planting_areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supply_usage_supply_id_fkey"
+            columns: ["supply_id"]
+            isOneToOne: false
+            referencedRelation: "supplies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_notifications: {
         Row: {
           created_at: string
