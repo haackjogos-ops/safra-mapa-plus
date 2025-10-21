@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import AddSupplyDialog from "@/components/insumos/AddSupplyDialog";
 import AddPurchaseDialog from "@/components/insumos/AddPurchaseDialog";
 import SupplyStockAlert from "@/components/insumos/SupplyStockAlert";
+import NFXmlUpload from "@/components/insumos/NFXmlUpload";
 import { format } from "date-fns";
 
 interface Supply {
@@ -123,6 +124,11 @@ const Insumos = () => {
       />
       <div className="p-6 space-y-6">
         <SupplyStockAlert supplies={supplies} />
+        
+        <NFXmlUpload onImportComplete={() => {
+          fetchSupplies();
+          fetchPurchases();
+        }} />
 
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
