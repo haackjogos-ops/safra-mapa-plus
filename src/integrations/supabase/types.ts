@@ -14,6 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
+      bank_statements: {
+        Row: {
+          arquivo_origem: string | null
+          banco: string
+          conta: string
+          created_at: string
+          data_transacao: string
+          descricao: string
+          id: string
+          reconciliado: boolean | null
+          saldo: number | null
+          tipo: string
+          transaction_id: string | null
+          valor: number
+        }
+        Insert: {
+          arquivo_origem?: string | null
+          banco: string
+          conta: string
+          created_at?: string
+          data_transacao: string
+          descricao: string
+          id?: string
+          reconciliado?: boolean | null
+          saldo?: number | null
+          tipo: string
+          transaction_id?: string | null
+          valor: number
+        }
+        Update: {
+          arquivo_origem?: string | null
+          banco?: string
+          conta?: string
+          created_at?: string
+          data_transacao?: string
+          descricao?: string
+          id?: string
+          reconciliado?: boolean | null
+          saldo?: number | null
+          tipo?: string
+          transaction_id?: string | null
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_statements_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "financial_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budgets: {
+        Row: {
+          categoria: string
+          created_at: string
+          id: string
+          mes_referencia: string
+          observacoes: string | null
+          safra_id: number | null
+          updated_at: string
+          valor_previsto: number
+          valor_realizado: number | null
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          id?: string
+          mes_referencia: string
+          observacoes?: string | null
+          safra_id?: number | null
+          updated_at?: string
+          valor_previsto: number
+          valor_realizado?: number | null
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          id?: string
+          mes_referencia?: string
+          observacoes?: string | null
+          safra_id?: number | null
+          updated_at?: string
+          valor_previsto?: number
+          valor_realizado?: number | null
+        }
+        Relationships: []
+      }
       checklist_items: {
         Row: {
           concluido: boolean
@@ -48,6 +137,87 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      financial_categories: {
+        Row: {
+          cor: string | null
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          tipo: string
+        }
+        Insert: {
+          cor?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          tipo: string
+        }
+        Update: {
+          cor?: string | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
+      financial_transactions: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_pagamento: string | null
+          data_transacao: string
+          data_vencimento: string | null
+          descricao: string
+          forma_pagamento: string | null
+          id: string
+          observacoes: string | null
+          safra_id: number | null
+          status: string
+          subcategoria: string | null
+          tipo: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_pagamento?: string | null
+          data_transacao: string
+          data_vencimento?: string | null
+          descricao: string
+          forma_pagamento?: string | null
+          id?: string
+          observacoes?: string | null
+          safra_id?: number | null
+          status?: string
+          subcategoria?: string | null
+          tipo: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_pagamento?: string | null
+          data_transacao?: string
+          data_vencimento?: string | null
+          descricao?: string
+          forma_pagamento?: string | null
+          id?: string
+          observacoes?: string | null
+          safra_id?: number | null
+          status?: string
+          subcategoria?: string | null
+          tipo?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: []
       }
       task_notifications: {
         Row: {
@@ -134,6 +304,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_balance: {
+        Args: { end_date: string; start_date: string }
+        Returns: {
+          saldo: number
+          total_despesas: number
+          total_receitas: number
+        }[]
+      }
       update_overdue_tasks: {
         Args: Record<PropertyKey, never>
         Returns: undefined
