@@ -9,7 +9,11 @@ import { Sprout, TrendingUp, DollarSign, Droplets, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const Dashboard = () => {
+interface DashboardProps {
+  onMenuClick?: () => void;
+}
+
+const Dashboard = ({ onMenuClick }: DashboardProps) => {
   const [city, setCity] = useState(() => {
     return localStorage.getItem("selectedCity") || "São Paulo";
   });
@@ -49,11 +53,12 @@ const Dashboard = () => {
       <Header
         title="Dashboard" 
         subtitle="Visão geral da sua produção agrícola"
+        onMenuClick={onMenuClick}
       />
       
-      <div className="p-6 space-y-6">
+      <div className="p-3 md:p-6 space-y-4 md:space-y-6">
         {/* Stats Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Área Total Plantada"
             value="480 ha"
@@ -92,8 +97,8 @@ const Dashboard = () => {
 
         {/* Cultures Grid */}
         <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Safras em Andamento</h3>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <h3 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4">Safras em Andamento</h3>
+          <div className="grid gap-3 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {cultures.map((culture) => (
               <CultureCard key={culture.name} {...culture} />
             ))}
@@ -102,7 +107,7 @@ const Dashboard = () => {
 
         {/* Weather Section */}
         <div>
-          <div className="mb-4 flex gap-2">
+          <div className="mb-3 md:mb-4 flex gap-2">
             <Input
               type="text"
               placeholder="Digite o nome da cidade..."
@@ -116,7 +121,7 @@ const Dashboard = () => {
             </Button>
           </div>
           
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <WeatherWidget city={searchCity} />
             
             <WeatherForecast city={searchCity} />

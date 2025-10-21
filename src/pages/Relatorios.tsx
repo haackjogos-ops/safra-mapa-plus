@@ -6,12 +6,17 @@ import AnnualComparison from "@/components/relatorios/AnnualComparison";
 import QuarterlyComparison from "@/components/relatorios/QuarterlyComparison";
 import HarvestForecast from "@/components/relatorios/HarvestForecast";
 
-const Relatorios = () => {
+interface RelatoriosProps {
+  onMenuClick?: () => void;
+}
+
+const Relatorios = ({ onMenuClick }: RelatoriosProps) => {
   return (
     <div className="min-h-screen">
       <Header 
         title="Relatórios e Análises" 
         subtitle="Análise detalhada da produção e finanças"
+        onMenuClick={onMenuClick}
       />
       
       <div className="p-6 space-y-6">

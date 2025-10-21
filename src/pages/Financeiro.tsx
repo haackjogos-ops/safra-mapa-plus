@@ -12,7 +12,11 @@ import FinancialCharts from "@/components/financeiro/FinancialCharts";
 import BankImport from "@/components/financeiro/BankImport";
 import { format } from "date-fns";
 
-const Financeiro = () => {
+interface FinanceiroProps {
+  onMenuClick?: () => void;
+}
+
+const Financeiro = ({ onMenuClick }: FinanceiroProps) => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [safras, setSafras] = useState<any[]>([]);
@@ -129,7 +133,7 @@ const Financeiro = () => {
 
   return (
     <div className="min-h-screen">
-      <Header title="Gestão Financeira" subtitle="Controle de receitas e despesas" />
+      <Header title="Gestão Financeira" subtitle="Controle de receitas e despesas" onMenuClick={onMenuClick} />
       
       <div className="p-6 space-y-6">
         {/* Stats Cards */}

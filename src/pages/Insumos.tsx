@@ -57,7 +57,11 @@ interface Purchase {
   supplies: { nome: string };
 }
 
-const Insumos = () => {
+interface InsumosProps {
+  onMenuClick?: () => void;
+}
+
+const Insumos = ({ onMenuClick }: InsumosProps) => {
   const [supplies, setSupplies] = useState<Supply[]>([]);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -129,6 +133,7 @@ const Insumos = () => {
       <Header
         title="Inventário de Insumos"
         subtitle="Controle de estoque e fornecedores"
+        onMenuClick={onMenuClick}
       />
       <div className="p-6 space-y-6">
         <SupplyStockAlert supplies={supplies} />

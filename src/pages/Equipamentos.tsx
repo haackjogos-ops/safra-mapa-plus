@@ -5,12 +5,17 @@ import { MaintenanceList } from "@/components/equipamentos/MaintenanceList";
 import { OperatorList } from "@/components/equipamentos/OperatorList";
 import { EquipmentAnalytics } from "@/components/equipamentos/EquipmentAnalytics";
 
-const Equipamentos = () => {
+interface EquipamentosProps {
+  onMenuClick?: () => void;
+}
+
+const Equipamentos = ({ onMenuClick }: EquipamentosProps) => {
   return (
     <div className="min-h-screen">
       <Header 
         title="Equipamentos e Máquinas" 
         subtitle="Controle de frotas e manutenções"
+        onMenuClick={onMenuClick}
       />
       <div className="p-6">
         <Tabs defaultValue="equipamentos" className="space-y-4">

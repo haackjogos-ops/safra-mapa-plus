@@ -10,7 +10,11 @@ import TaskCard from "@/components/tarefas/TaskCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const Tarefas = () => {
+interface TarefasProps {
+  onMenuClick?: () => void;
+}
+
+const Tarefas = ({ onMenuClick }: TarefasProps) => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [checklistItems, setChecklistItems] = useState<any[]>([]);
   const [safras, setSafras] = useState<any[]>([]);
@@ -122,7 +126,7 @@ const Tarefas = () => {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Header title="Tarefas" subtitle="Gerenciamento de atividades agrícolas" />
+        <Header title="Tarefas" subtitle="Gerenciamento de atividades agrícolas" onMenuClick={onMenuClick} />
         <div className="p-6">
           <p className="text-center text-muted-foreground">Carregando tarefas...</p>
         </div>
@@ -132,7 +136,7 @@ const Tarefas = () => {
 
   return (
     <div className="min-h-screen">
-      <Header title="Tarefas" subtitle="Gerenciamento de atividades agrícolas" />
+      <Header title="Tarefas" subtitle="Gerenciamento de atividades agrícolas" onMenuClick={onMenuClick} />
       
       <div className="p-6 space-y-6">
         {/* Search and Add */}

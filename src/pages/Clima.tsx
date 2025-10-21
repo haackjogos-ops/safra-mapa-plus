@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Header from "@/components/layout/Header";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,11 @@ import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { WeatherForecast } from "@/components/dashboard/WeatherForecast";
 import { toast } from "sonner";
 
-const Clima = () => {
+interface ClimaProps {
+  onMenuClick?: () => void;
+}
+
+const Clima = ({ onMenuClick }: ClimaProps) => {
   const [searchCity, setSearchCity] = useState("");
   const [currentCity, setCurrentCity] = useState(() => {
     return localStorage.getItem("selectedCity") || "São Paulo";
@@ -29,20 +34,16 @@ const Clima = () => {
   }, [currentCity]);
 
   return (
-    <div className="min-h-screen bg-background p-6 space-y-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            Previsão do Tempo
-          </h1>
-          <p className="text-muted-foreground">
-            Acompanhe as condições climáticas para planejar suas atividades agrícolas
-          </p>
-        </div>
+    <div className="min-h-screen">
+      <Header 
+        title="Previsão do Tempo" 
+        subtitle="Acompanhe as condições climáticas para planejar suas atividades agrícolas"
+        onMenuClick={onMenuClick}
+      />
+      <div className="p-3 md:p-6 space-y-4 md:space-y-6">
 
         {/* Busca de Cidade */}
-        <Card className="p-6">
+        <Card className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -66,7 +67,7 @@ const Clima = () => {
 
         {/* Clima Atual */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4 text-foreground">
+          <h2 className="text-lg md:text-2xl font-semibold mb-3 md:mb-4 text-foreground">
             Condições Atuais
           </h2>
           <WeatherWidget city={currentCity} />
@@ -74,18 +75,18 @@ const Clima = () => {
 
         {/* Previsão Estendida */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4 text-foreground">
+          <h2 className="text-lg md:text-2xl font-semibold mb-3 md:mb-4 text-foreground">
             Previsão para os Próximos Dias
           </h2>
           <WeatherForecast city={currentCity} />
         </div>
 
         {/* Dicas Agrícolas */}
-        <Card className="p-6 bg-primary/5 border-primary/20">
-          <h3 className="text-lg font-semibold mb-3 text-foreground">
+        <Card className="p-4 md:p-6 bg-primary/5 border-primary/20">
+          <h3 className="text-base md:text-lg font-semibold mb-3 text-foreground">
             Dicas para Atividades Agrícolas
           </h3>
-          <ul className="space-y-2 text-sm text-muted-foreground">
+          <ul className="space-y-2 text-xs md:text-sm text-muted-foreground">
             <li>• Evite pulverização com ventos acima de 10 km/h</li>
             <li>• Temperatura ideal para aplicações: 15°C a 30°C</li>
             <li>• Umidade relativa ideal: 50% a 90%</li>

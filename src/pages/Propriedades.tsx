@@ -10,7 +10,11 @@ import MapComponent from "@/components/propriedades/MapComponent";
 import AddPlantingAreaDialog from "@/components/propriedades/AddPlantingAreaDialog";
 import DeletePropertyButton from "@/components/propriedades/DeletePropertyButton";
 
-const Propriedades = () => {
+interface PropriedadesProps {
+  onMenuClick?: () => void;
+}
+
+const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
   const [properties, setProperties] = useState<any[]>([]);
   const [plantingAreas, setPlantingAreas] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,6 +86,7 @@ const Propriedades = () => {
       <Header 
         title="Propriedades" 
         subtitle="Gerencie suas propriedades e áreas de plantio"
+        onMenuClick={onMenuClick}
       />
       
       <div className="p-6 space-y-6">

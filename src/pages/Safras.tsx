@@ -11,7 +11,11 @@ import SafraCalendar from "@/components/safras/SafraCalendar";
 import HealthAnalysis from "@/components/safras/HealthAnalysis";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-const Safras = () => {
+interface SafrasProps {
+  onMenuClick?: () => void;
+}
+
+const Safras = ({ onMenuClick }: SafrasProps) => {
   const [safras, setSafras] = useState([
     {
       id: 1,
@@ -85,6 +89,7 @@ const Safras = () => {
       <Header 
         title="Safras" 
         subtitle="Cadastro e monitoramento de culturas"
+        onMenuClick={onMenuClick}
       />
       
       <div className="p-6 space-y-6">

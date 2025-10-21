@@ -29,7 +29,11 @@ interface PlantingArea {
   property_id: string;
 }
 
-const Agronomo = () => {
+interface AgronomoProps {
+  onMenuClick?: () => void;
+}
+
+const Agronomo = ({ onMenuClick }: AgronomoProps) => {
   const [equipmentType, setEquipmentType] = useState<"trator" | "drone">("trator");
   const [supplies, setSupplies] = useState<Supply[]>([]);
   const [plantingAreas, setPlantingAreas] = useState<PlantingArea[]>([]);
@@ -162,6 +166,7 @@ const Agronomo = () => {
       <Header 
         title="Controle do Agrônomo" 
         subtitle="Gestão e cálculo de aplicações agrícolas"
+        onMenuClick={onMenuClick}
       />
       
       <div className="p-6 space-y-6">
