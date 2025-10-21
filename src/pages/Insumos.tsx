@@ -22,6 +22,9 @@ import SupplyStockAlert from "@/components/insumos/SupplyStockAlert";
 import NFXmlUpload from "@/components/insumos/NFXmlUpload";
 import SupplyUsageForecast from "@/components/insumos/SupplyUsageForecast";
 import SupplierComparison from "@/components/insumos/SupplierComparison";
+import MarketPrices from "@/components/insumos/MarketPrices";
+import ConsumptionByCulture from "@/components/insumos/ConsumptionByCulture";
+import DirectPurchase from "@/components/insumos/DirectPurchase";
 import { format } from "date-fns";
 
 interface Supply {
@@ -181,6 +184,9 @@ const Insumos = () => {
             <TabsTrigger value="purchases">Histórico de Compras</TabsTrigger>
             <TabsTrigger value="forecast">Previsões</TabsTrigger>
             <TabsTrigger value="suppliers">Fornecedores</TabsTrigger>
+            <TabsTrigger value="market">Preços de Mercado</TabsTrigger>
+            <TabsTrigger value="consumption">Consumo por Cultura</TabsTrigger>
+            <TabsTrigger value="purchase">Compra Direta</TabsTrigger>
           </TabsList>
 
           <TabsContent value="inventory" className="space-y-4">
@@ -323,6 +329,18 @@ const Insumos = () => {
 
           <TabsContent value="suppliers">
             <SupplierComparison />
+          </TabsContent>
+
+          <TabsContent value="market">
+            <MarketPrices />
+          </TabsContent>
+
+          <TabsContent value="consumption">
+            <ConsumptionByCulture />
+          </TabsContent>
+
+          <TabsContent value="purchase">
+            <DirectPurchase />
           </TabsContent>
         </Tabs>
       </div>
