@@ -138,6 +138,142 @@ export type Database = {
           },
         ]
       }
+      equipamentos: {
+        Row: {
+          ano_fabricacao: number | null
+          capacidade: string | null
+          created_at: string
+          data_aquisicao: string | null
+          hodometro_atual: number | null
+          horimetro_atual: number | null
+          id: string
+          marca: string | null
+          modelo: string | null
+          nome: string
+          numero_serie: string | null
+          observacoes: string | null
+          placa: string | null
+          status: string
+          tipo: string
+          updated_at: string
+          valor_aquisicao: number | null
+        }
+        Insert: {
+          ano_fabricacao?: number | null
+          capacidade?: string | null
+          created_at?: string
+          data_aquisicao?: string | null
+          hodometro_atual?: number | null
+          horimetro_atual?: number | null
+          id?: string
+          marca?: string | null
+          modelo?: string | null
+          nome: string
+          numero_serie?: string | null
+          observacoes?: string | null
+          placa?: string | null
+          status?: string
+          tipo: string
+          updated_at?: string
+          valor_aquisicao?: number | null
+        }
+        Update: {
+          ano_fabricacao?: number | null
+          capacidade?: string | null
+          created_at?: string
+          data_aquisicao?: string | null
+          hodometro_atual?: number | null
+          horimetro_atual?: number | null
+          id?: string
+          marca?: string | null
+          modelo?: string | null
+          nome?: string
+          numero_serie?: string | null
+          observacoes?: string | null
+          placa?: string | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+          valor_aquisicao?: number | null
+        }
+        Relationships: []
+      }
+      escala_trabalho: {
+        Row: {
+          area_trabalhada: number | null
+          atividade: string | null
+          created_at: string
+          data_fim: string | null
+          data_inicio: string
+          equipamento_id: string
+          hodometro_fim: number | null
+          hodometro_inicio: number | null
+          horimetro_fim: number | null
+          horimetro_inicio: number | null
+          id: string
+          observacoes: string | null
+          operador_id: string
+          planting_area_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          area_trabalhada?: number | null
+          atividade?: string | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio: string
+          equipamento_id: string
+          hodometro_fim?: number | null
+          hodometro_inicio?: number | null
+          horimetro_fim?: number | null
+          horimetro_inicio?: number | null
+          id?: string
+          observacoes?: string | null
+          operador_id: string
+          planting_area_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area_trabalhada?: number | null
+          atividade?: string | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          equipamento_id?: string
+          hodometro_fim?: number | null
+          hodometro_inicio?: number | null
+          horimetro_fim?: number | null
+          horimetro_inicio?: number | null
+          id?: string
+          observacoes?: string | null
+          operador_id?: string
+          planting_area_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escala_trabalho_equipamento_id_fkey"
+            columns: ["equipamento_id"]
+            isOneToOne: false
+            referencedRelation: "equipamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escala_trabalho_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "operadores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escala_trabalho_planting_area_id_fkey"
+            columns: ["planting_area_id"]
+            isOneToOne: false
+            referencedRelation: "planting_areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_categories: {
         Row: {
           cor: string | null
@@ -261,6 +397,68 @@ export type Database = {
         }
         Relationships: []
       }
+      manutencoes: {
+        Row: {
+          created_at: string
+          custo: number | null
+          data_manutencao: string
+          descricao: string
+          equipamento_id: string
+          hodometro: number | null
+          horimetro: number | null
+          id: string
+          observacoes: string | null
+          pecas_trocadas: string[] | null
+          proxima_manutencao: string | null
+          responsavel: string | null
+          status: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          custo?: number | null
+          data_manutencao: string
+          descricao: string
+          equipamento_id: string
+          hodometro?: number | null
+          horimetro?: number | null
+          id?: string
+          observacoes?: string | null
+          pecas_trocadas?: string[] | null
+          proxima_manutencao?: string | null
+          responsavel?: string | null
+          status?: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          custo?: number | null
+          data_manutencao?: string
+          descricao?: string
+          equipamento_id?: string
+          hodometro?: number | null
+          horimetro?: number | null
+          id?: string
+          observacoes?: string | null
+          pecas_trocadas?: string[] | null
+          proxima_manutencao?: string | null
+          responsavel?: string | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manutencoes_equipamento_id_fkey"
+            columns: ["equipamento_id"]
+            isOneToOne: false
+            referencedRelation: "equipamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_prices: {
         Row: {
           created_at: string
@@ -291,6 +489,57 @@ export type Database = {
           observacoes?: string | null
           preco_medio?: number
           unidade?: string
+        }
+        Relationships: []
+      }
+      operadores: {
+        Row: {
+          cnh_categoria: string | null
+          cnh_numero: string | null
+          cnh_validade: string | null
+          cpf: string | null
+          created_at: string
+          data_admissao: string | null
+          email: string | null
+          especializacao: string[] | null
+          id: string
+          nome: string
+          observacoes: string | null
+          status: string
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cnh_categoria?: string | null
+          cnh_numero?: string | null
+          cnh_validade?: string | null
+          cpf?: string | null
+          created_at?: string
+          data_admissao?: string | null
+          email?: string | null
+          especializacao?: string[] | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cnh_categoria?: string | null
+          cnh_numero?: string | null
+          cnh_validade?: string | null
+          cpf?: string | null
+          created_at?: string
+          data_admissao?: string | null
+          email?: string | null
+          especializacao?: string[] | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
