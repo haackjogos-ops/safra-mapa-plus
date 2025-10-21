@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { TrendingUp, TrendingDown, Plus, DollarSign } from "lucide-react";
+import { TrendingUp, TrendingDown, Plus, DollarSign, Sparkles, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -39,6 +39,9 @@ interface MarketPrice {
 const MarketPrices = () => {
   const [prices, setPrices] = useState<MarketPrice[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAiSearchOpen, setIsAiSearchOpen] = useState(false);
+  const [aiSearchProduct, setAiSearchProduct] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [formData, setFormData] = useState({
     cultura: "",
     preco_medio: "",
@@ -70,6 +73,61 @@ const MarketPrices = () => {
   useEffect(() => {
     fetchPrices();
   }, []);
+
+  const handleAiSearch = async () => {
+    if (!aiSearchProduct.trim()) {
+      toast({
+        title: "Digite um produto",
+        description: "Informe o nome do insumo para buscar",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSearching(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('search-market-prices', {
+        body: { produto: aiSearchProduct }
+      });
+
+      if (error) throw error;
+
+      if (data?.success && data?.data) {
+        const priceData = data.data;
+        
+        // Inserir no banco de dados
+        const { error: insertError } = await supabase.from("market_prices").insert({
+          cultura: priceData.produto,
+          preco_medio: priceData.preco_medio,
+          unidade: priceData.unidade,
+          data_referencia: priceData.data_referencia,
+          fonte: priceData.fonte || "OpenAI Search",
+          observacoes: priceData.observacoes || null,
+        });
+
+        if (insertError) throw insertError;
+
+        toast({
+          title: "Preço encontrado!",
+          description: `${priceData.produto}: R$ ${priceData.preco_medio.toFixed(2)}/${priceData.unidade}`,
+        });
+
+        setAiSearchProduct("");
+        setIsAiSearchOpen(false);
+        fetchPrices();
+      }
+    } catch (error: any) {
+      console.error('Error searching prices:', error);
+      toast({
+        title: "Erro na busca",
+        description: error.message || "Não foi possível buscar o preço",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,14 +194,61 @@ const MarketPrices = () => {
           <div>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5" />
-              Preços de Mercado
+            Preços de Mercado
             </CardTitle>
             <CardDescription>
               Acompanhe os preços de insumos no mercado
             </CardDescription>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
+          <div className="flex gap-2">
+            <Dialog open={isAiSearchOpen} onOpenChange={setIsAiSearchOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Buscar com IA
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    Buscar Preços com IA
+                  </DialogTitle>
+                  <DialogDescription>
+                    Use inteligência artificial para buscar preços atualizados de mercado
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="ai-search">Nome do Produto/Insumo</Label>
+                    <Input
+                      id="ai-search"
+                      placeholder="Ex: Ureia, NPK 20-05-20, Glifosato..."
+                      value={aiSearchProduct}
+                      onChange={(e) => setAiSearchProduct(e.target.value)}
+                      disabled={isSearching}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleAiSearch} disabled={isSearching}>
+                    {isSearching ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Buscando...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Buscar
+                      </>
+                    )}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Adicionar Preço
@@ -227,7 +332,8 @@ const MarketPrices = () => {
                 </DialogFooter>
               </form>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
