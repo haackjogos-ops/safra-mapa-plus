@@ -1,13 +1,18 @@
+import { useState } from "react";
 import Header from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Calendar, Droplets } from "lucide-react";
+import { Search, Calendar, Droplets } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import AddSafraDialog from "@/components/safras/AddSafraDialog";
+import SafraCalendar from "@/components/safras/SafraCalendar";
+import HealthAnalysis from "@/components/safras/HealthAnalysis";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const Safras = () => {
-  const safras = [
+  const [safras, setSafras] = useState([
     {
       id: 1,
       cultura: "Soja",
@@ -44,7 +49,24 @@ const Safras = () => {
       irrigacao: "Inundação",
       proximaAtividade: "Controle de plantas daninhas"
     },
-  ];
+  ]);
+
+  const [selectedSafra, setSelectedSafra] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleAddSafra = (novaSafra: any) => {
+    const newId = safras.length > 0 ? Math.max(...safras.map(s => s.id)) + 1 : 1;
+    setSafras([...safras, { 
+      id: newId, 
+      ...novaSafra,
+      proximaAtividade: "Monitoramento inicial"
+    }]);
+  };
+
+  const filteredSafras = safras.filter(safra =>
+    safra.cultura.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    safra.variedade.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getCulturaIcon = (cultura: string) => {
     const icons: Record<string, string> = {
@@ -74,17 +96,44 @@ const Safras = () => {
               type="search"
               placeholder="Buscar safra..."
               className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Safra
-          </Button>
+          <AddSafraDialog onAdd={handleAddSafra} />
+        </div>
+
+        {/* Calendário e Análises */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <SafraCalendar safras={safras} />
+          </div>
+          <div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Resumo Rápido</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Total de Safras</span>
+                  <span className="text-2xl font-bold text-primary">{safras.length}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Culturas Ativas</span>
+                  <span className="text-2xl font-bold text-secondary">{new Set(safras.map(s => s.cultura)).size}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Área Total</span>
+                  <span className="text-2xl font-bold text-accent">430 ha</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Safras Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {safras.map((safra) => (
+          {filteredSafras.map((safra) => (
             <Card key={safra.id} className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -144,7 +193,12 @@ const Safras = () => {
                   <p className="text-sm font-medium text-foreground">{safra.proximaAtividade}</p>
                 </div>
 
-                <Button variant="outline" className="w-full" size="sm">
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  size="sm"
+                  onClick={() => setSelectedSafra(safra)}
+                >
                   Ver Detalhes
                 </Button>
               </CardContent>
@@ -184,6 +238,57 @@ const Safras = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Dialog de Detalhes */}
+        <Dialog open={!!selectedSafra} onOpenChange={() => setSelectedSafra(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <span className="text-3xl">{selectedSafra && getCulturaIcon(selectedSafra.cultura)}</span>
+                <span>{selectedSafra?.cultura} - {selectedSafra?.variedade}</span>
+              </DialogTitle>
+            </DialogHeader>
+            {selectedSafra && (
+              <div className="space-y-4 py-4">
+                <HealthAnalysis safra={selectedSafra} />
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Informações da Safra</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Área</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.area}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Fase</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.fase}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Data de Plantio</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.dataPlantio}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Previsão Colheita</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.previsaoColheita}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Irrigação</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.irrigacao}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Progresso</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.progresso}%</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
