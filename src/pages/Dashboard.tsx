@@ -5,11 +5,13 @@ import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { WeatherForecast } from "@/components/dashboard/WeatherForecast";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Sprout, TrendingUp, DollarSign, Droplets } from "lucide-react";
+import { Sprout, TrendingUp, DollarSign, Droplets, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
   const [city, setCity] = useState("São Paulo");
+  const [searchCity, setSearchCity] = useState("São Paulo");
   
   const cultures = [
     { name: "Soja", area: "150 hectares", status: "Crescimento", progress: 65, nextTask: "Aplicação de defensivos", image: "🌱" },
@@ -76,20 +78,24 @@ const Dashboard = () => {
 
         {/* Weather Section */}
         <div>
-          <div className="mb-4">
+          <div className="mb-4 flex gap-2">
             <Input
               type="text"
               placeholder="Digite o nome da cidade..."
               value={city}
               onChange={(e) => setCity(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && setSearchCity(city)}
               className="max-w-xs"
             />
+            <Button onClick={() => setSearchCity(city)} size="icon">
+              <Search className="h-4 w-4" />
+            </Button>
           </div>
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <WeatherWidget city={city} />
+            <WeatherWidget city={searchCity} />
             
-            <WeatherForecast city={city} />
+            <WeatherForecast city={searchCity} />
 
           <Card>
             <CardHeader>
