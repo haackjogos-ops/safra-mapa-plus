@@ -45,7 +45,19 @@ export const WeatherForecast = ({ city = "São Paulo", lat, lon }: WeatherForeca
   }
 
   if (!weatherData?.forecast || weatherData.forecast.length === 0) {
-    return null;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Previsão
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">Nenhum dado disponível</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

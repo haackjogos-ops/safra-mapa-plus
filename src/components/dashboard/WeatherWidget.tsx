@@ -45,7 +45,19 @@ export const WeatherWidget = ({ city = "São Paulo", lat, lon }: WeatherWidgetPr
   }
 
   if (!weatherData?.current) {
-    return null;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Cloud className="h-5 w-5" />
+            Clima
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">Nenhum dado disponível</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   const { current } = weatherData;
