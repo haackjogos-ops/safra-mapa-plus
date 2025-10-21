@@ -294,6 +294,47 @@ export type Database = {
         }
         Relationships: []
       }
+      planned_purchases: {
+        Row: {
+          created_at: string
+          data_planejada: string
+          id: string
+          observacoes: string | null
+          preco_estimado: number
+          quantidade: number
+          supply_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_planejada: string
+          id?: string
+          observacoes?: string | null
+          preco_estimado: number
+          quantidade: number
+          supply_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_planejada?: string
+          id?: string
+          observacoes?: string | null
+          preco_estimado?: number
+          quantidade?: number
+          supply_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "planned_purchases_supply_id_fkey"
+            columns: ["supply_id"]
+            isOneToOne: false
+            referencedRelation: "supplies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       planting_areas: {
         Row: {
           area_hectares: number | null

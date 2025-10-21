@@ -25,6 +25,9 @@ import SupplierComparison from "@/components/insumos/SupplierComparison";
 import MarketPrices from "@/components/insumos/MarketPrices";
 import ConsumptionByCulture from "@/components/insumos/ConsumptionByCulture";
 import DirectPurchase from "@/components/insumos/DirectPurchase";
+import StockOverview from "@/components/insumos/StockOverview";
+import EditableSupplyTable from "@/components/insumos/EditableSupplyTable";
+import PurchaseCalendar from "@/components/insumos/PurchaseCalendar";
 import { format } from "date-fns";
 
 interface Supply {
@@ -178,99 +181,29 @@ const Insumos = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue="inventory" className="space-y-4">
-          <TabsList>
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList className="flex-wrap h-auto">
+            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="inventory">Estoque</TabsTrigger>
-            <TabsTrigger value="purchases">Histórico de Compras</TabsTrigger>
+            <TabsTrigger value="calendar">Calendário</TabsTrigger>
+            <TabsTrigger value="purchases">Histórico</TabsTrigger>
             <TabsTrigger value="forecast">Previsões</TabsTrigger>
             <TabsTrigger value="suppliers">Fornecedores</TabsTrigger>
-            <TabsTrigger value="market">Preços de Mercado</TabsTrigger>
-            <TabsTrigger value="consumption">Consumo por Cultura</TabsTrigger>
+            <TabsTrigger value="market">Mercado</TabsTrigger>
+            <TabsTrigger value="consumption">Consumo</TabsTrigger>
             <TabsTrigger value="purchase">Compra Direta</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="inventory" className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-              <div className="flex-1 flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar insumos..."
-                    className="pl-9"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <select
-                  className="border rounded-md px-3 py-2 bg-background"
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                  <option value="all">Todas as categorias</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <AddSupplyDialog onSupplyAdded={fetchSupplies} />
-            </div>
+          <TabsContent value="overview">
+            <StockOverview />
+          </TabsContent>
 
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead>Estoque</TableHead>
-                    <TableHead>Est. Mín.</TableHead>
-                    <TableHead>Preço Unit.</TableHead>
-                    <TableHead>Valor Total</TableHead>
-                    <TableHead>Fornecedor</TableHead>
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredSupplies.map((supply) => {
-                    const isLowStock = supply.quantidade_estoque <= supply.estoque_minimo;
-                    return (
-                      <TableRow key={supply.id}>
-                        <TableCell className="font-medium">{supply.nome}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{supply.categoria}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <span className={isLowStock ? "text-destructive font-bold" : ""}>
-                            {supply.quantidade_estoque} {supply.unidade_medida}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          {supply.estoque_minimo} {supply.unidade_medida}
-                        </TableCell>
-                        <TableCell>
-                          R$ {supply.preco_unitario.toFixed(2)}
-                        </TableCell>
-                        <TableCell>
-                          R$ {(supply.quantidade_estoque * supply.preco_unitario).toFixed(2)}
-                        </TableCell>
-                        <TableCell>{supply.fornecedor || "-"}</TableCell>
-                        <TableCell>
-                          <AddPurchaseDialog
-                            supplyId={supply.id}
-                            supplyName={supply.nome}
-                            onPurchaseAdded={() => {
-                              fetchSupplies();
-                              fetchPurchases();
-                            }}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+          <TabsContent value="calendar">
+            <PurchaseCalendar />
+          </TabsContent>
+
+          <TabsContent value="inventory">
+            <EditableSupplyTable />
           </TabsContent>
 
           <TabsContent value="purchases" className="space-y-4">
