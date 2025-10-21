@@ -84,7 +84,7 @@ export const WeatherWidget = ({ city = "São Paulo", lat, lon }: WeatherWidgetPr
             <Wind className="h-4 w-4 text-gray-500" />
             <div>
               <div className="font-medium">Vento</div>
-              <div className="text-muted-foreground">{current.wind_speed} m/s</div>
+              <div className="text-muted-foreground">{(current.wind_speed * 3.6).toFixed(1)} km/h</div>
             </div>
           </div>
 

@@ -3,10 +3,14 @@ import StatCard from "@/components/dashboard/StatCard";
 import CultureCard from "@/components/dashboard/CultureCard";
 import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { WeatherForecast } from "@/components/dashboard/WeatherForecast";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { Sprout, TrendingUp, DollarSign, Droplets } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
+  const [city, setCity] = useState("São Paulo");
+  
   const cultures = [
     { name: "Soja", area: "150 hectares", status: "Crescimento", progress: 65, nextTask: "Aplicação de defensivos", image: "🌱" },
     { name: "Milho", area: "200 hectares", status: "Manutenção", progress: 45, nextTask: "Irrigação programada", image: "🌽" },
@@ -70,11 +74,22 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Weather and Quick Actions */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <WeatherWidget city="São Paulo" />
+        {/* Weather Section */}
+        <div>
+          <div className="mb-4">
+            <Input
+              type="text"
+              placeholder="Digite o nome da cidade..."
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="max-w-xs"
+            />
+          </div>
           
-          <WeatherForecast city="São Paulo" />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <WeatherWidget city={city} />
+            
+            <WeatherForecast city={city} />
 
           <Card>
             <CardHeader>
@@ -97,6 +112,7 @@ const Dashboard = () => {
               </ul>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
     </div>
