@@ -13,7 +13,7 @@ interface WeatherWidgetProps {
 
 export const WeatherWidget = ({ city = "São Paulo", lat, lon }: WeatherWidgetProps) => {
   const { data: weatherData, isLoading } = useQuery({
-    queryKey: ["weather", city, lat, lon],
+    queryKey: ["weather-current", city, lat, lon],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("get-weather-data", {
         body: { city, lat, lon },
@@ -21,7 +21,8 @@ export const WeatherWidget = ({ city = "São Paulo", lat, lon }: WeatherWidgetPr
       if (error) throw error;
       return data;
     },
-    refetchInterval: 1800000, // Atualiza a cada 30 minutos
+    staleTime: 1800000, // Considera dados atualizados por 30 minutos
+    enabled: !!city || (!!lat && !!lon), // Só busca se tiver cidade ou coordenadas
   });
 
   if (isLoading) {

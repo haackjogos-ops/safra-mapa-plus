@@ -13,7 +13,7 @@ interface WeatherForecastProps {
 
 export const WeatherForecast = ({ city = "São Paulo", lat, lon }: WeatherForecastProps) => {
   const { data: weatherData, isLoading } = useQuery({
-    queryKey: ["weather", city, lat, lon],
+    queryKey: ["weather-forecast", city, lat, lon],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("get-weather-data", {
         body: { city, lat, lon },
@@ -21,7 +21,8 @@ export const WeatherForecast = ({ city = "São Paulo", lat, lon }: WeatherForeca
       if (error) throw error;
       return data;
     },
-    refetchInterval: 1800000,
+    staleTime: 1800000,
+    enabled: !!city || (!!lat && !!lon),
   });
 
   if (isLoading) {
