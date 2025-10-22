@@ -106,11 +106,13 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Culturas Ativas</span>
-                  <span className="text-2xl font-bold text-secondary">{new Set(safras.map(s => s.cultura)).size}</span>
+                  <span className="text-2xl font-bold text-secondary">{safras.length > 0 ? new Set(safras.map(s => s.cultura)).size : 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Área Total</span>
-                  <span className="text-2xl font-bold text-accent">430 ha</span>
+                  <span className="text-2xl font-bold text-accent">
+                    {safras.length > 0 ? safras.reduce((sum, s) => sum + parseFloat(s.area?.replace(' ha', '') || '0'), 0).toFixed(0) + ' ha' : '0 ha'}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -203,37 +205,43 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Área Total Cultivada</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-primary">430 ha</p>
-              <p className="text-sm text-muted-foreground mt-1">Distribuídos em 3 culturas ativas</p>
-            </CardContent>
-          </Card>
+        {safras.length > 0 && (
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Área Total Cultivada</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-primary">
+                  {safras.reduce((sum, s) => sum + parseFloat(s.area?.replace(' ha', '') || '0'), 0).toFixed(0)} ha
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Distribuídos em {new Set(safras.map(s => s.cultura)).size} culturas ativas
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Produtividade Esperada</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-secondary">1.850 t</p>
-              <p className="text-sm text-muted-foreground mt-1">Baseado nas condições atuais</p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Produtividade Esperada</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-secondary">-</p>
+                <p className="text-sm text-muted-foreground mt-1">Baseado nas condições atuais</p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Investimento Total</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-accent">R$ 1.2M</p>
-              <p className="text-sm text-muted-foreground mt-1">Insumos e mão de obra</p>
-            </CardContent>
-          </Card>
-        </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Investimento Total</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-accent">-</p>
+                <p className="text-sm text-muted-foreground mt-1">Insumos e mão de obra</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Dialog de Detalhes */}
         <Dialog open={!!selectedSafra} onOpenChange={() => setSelectedSafra(null)}>

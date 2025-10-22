@@ -42,12 +42,7 @@ const Dashboard = ({ onMenuClick }: DashboardProps) => {
     };
   }, []);
   
-  const cultures = [
-    { name: "Soja", area: "150 hectares", status: "Crescimento", progress: 65, nextTask: "Aplicação de defensivos", image: "🌱" },
-    { name: "Milho", area: "200 hectares", status: "Manutenção", progress: 45, nextTask: "Irrigação programada", image: "🌽" },
-    { name: "Arroz", area: "80 hectares", status: "Plantio", progress: 20, nextTask: "Preparo do solo", image: "🌾" },
-    { name: "Fumo", area: "50 hectares", status: "Colheita", progress: 90, nextTask: "Colheita seletiva", image: "🍃" },
-  ];
+  const cultures: any[] = [];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
@@ -64,14 +59,14 @@ const Dashboard = ({ onMenuClick }: DashboardProps) => {
             <Card className="p-4 text-center gradient-accent hover:scale-105 active:scale-95 transition-all cursor-pointer border-0 shadow-md">
               <ListTodo className="h-10 w-10 mx-auto mb-2 text-primary" />
               <p className="font-bold text-sm">Tarefas</p>
-              <p className="text-xs text-muted-foreground">12 pendentes</p>
+              <p className="text-xs text-muted-foreground">Cadastre</p>
             </Card>
           </Link>
           <Link to="/safras">
             <Card className="p-4 text-center gradient-accent hover:scale-105 active:scale-95 transition-all cursor-pointer border-0 shadow-md">
               <Sprout className="h-10 w-10 mx-auto mb-2 text-primary" />
               <p className="font-bold text-sm">Safras</p>
-              <p className="text-xs text-muted-foreground">4 ativas</p>
+              <p className="text-xs text-muted-foreground">Cadastre</p>
             </Card>
           </Link>
           <Link to="/agronomo">
@@ -94,49 +89,45 @@ const Dashboard = ({ onMenuClick }: DashboardProps) => {
         <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4 animate-slide-up">
           <StatCard
             title="Área Total Plantada"
-            value="480 ha"
-            subtitle="Distribuídos em 4 culturas"
+            value="0 ha"
+            subtitle="Cadastre suas safras"
             icon={Sprout}
-            trend="up"
-            trendValue="12%"
             gradient="primary"
           />
           <StatCard
             title="Produtividade Média"
-            value="3.2 t/ha"
-            subtitle="Acima da média regional"
+            value="-"
+            subtitle="Aguardando dados"
             icon={TrendingUp}
-            trend="up"
-            trendValue="8%"
             gradient="harvest"
           />
           <StatCard
             title="Receita Estimada"
-            value="R$ 2.4M"
+            value="R$ 0"
             subtitle="Baseado na safra atual"
             icon={DollarSign}
-            trend="up"
-            trendValue="15%"
             gradient="earth"
           />
           <StatCard
             title="Irrigação Eficiente"
-            value="92%"
-            subtitle="Economia de 15% de água"
+            value="-"
+            subtitle="Sem dados"
             icon={Droplets}
             gradient="primary"
           />
         </div>
 
         {/* Cultures Grid */}
-        <div>
-          <h3 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4">Safras em Andamento</h3>
-          <div className="grid gap-3 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {cultures.map((culture) => (
-              <CultureCard key={culture.name} {...culture} />
-            ))}
+        {cultures.length > 0 && (
+          <div>
+            <h3 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4">Safras em Andamento</h3>
+            <div className="grid gap-3 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+              {cultures.map((culture) => (
+                <CultureCard key={culture.name} {...culture} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Weather Section */}
         <div>
@@ -164,20 +155,9 @@ const Dashboard = ({ onMenuClick }: DashboardProps) => {
               <CardTitle className="text-base">Estoque Crítico</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
-                <li className="flex items-center justify-between p-2 rounded-lg bg-destructive/10">
-                  <span className="text-sm">Fertilizante NPK</span>
-                  <span className="text-xs font-medium text-destructive">5% restante</span>
-                </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-accent/10">
-                  <span className="text-sm">Defensivo Foliar</span>
-                  <span className="text-xs font-medium text-accent">15% restante</span>
-                </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-primary/10">
-                  <span className="text-sm">Sementes Milho</span>
-                  <span className="text-xs font-medium text-primary">Estoque OK</span>
-                </li>
-              </ul>
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Nenhum alerta de estoque no momento
+              </p>
             </CardContent>
           </Card>
           </div>
