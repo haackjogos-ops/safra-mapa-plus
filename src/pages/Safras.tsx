@@ -4,7 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Calendar, Droplets } from "lucide-react";
+import { Search, Calendar, Droplets, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import AddSafraDialog from "@/components/safras/AddSafraDialog";
 import SafraCalendar from "@/components/safras/SafraCalendar";
@@ -57,6 +67,7 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
 
   const [selectedSafra, setSelectedSafra] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [safraToDelete, setSafraToDelete] = useState<any>(null);
 
   const handleAddSafra = (novaSafra: any) => {
     const newId = safras.length > 0 ? Math.max(...safras.map(s => s.id)) + 1 : 1;
@@ -65,6 +76,13 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
       ...novaSafra,
       proximaAtividade: "Monitoramento inicial"
     }]);
+  };
+
+  const handleDeleteSafra = () => {
+    if (safraToDelete) {
+      setSafras(safras.filter(s => s.id !== safraToDelete.id));
+      setSafraToDelete(null);
+    }
   };
 
   const filteredSafras = safras.filter(safra =>
@@ -198,14 +216,24 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
                   <p className="text-sm font-medium text-foreground">{safra.proximaAtividade}</p>
                 </div>
 
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
-                  size="sm"
-                  onClick={() => setSelectedSafra(safra)}
-                >
-                  Ver Detalhes
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1" 
+                    size="sm"
+                    onClick={() => setSelectedSafra(safra)}
+                  >
+                    Ver Detalhes
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setSafraToDelete(safra)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -294,6 +322,25 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Dialog de Confirmação de Exclusão */}
+        <AlertDialog open={!!safraToDelete} onOpenChange={() => setSafraToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir Safra</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir a safra de {safraToDelete?.cultura} - {safraToDelete?.variedade}? 
+                Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteSafra} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
