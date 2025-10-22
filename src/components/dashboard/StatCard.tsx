@@ -21,12 +21,6 @@ const StatCard = ({
   trendValue,
   gradient = "primary" 
 }: StatCardProps) => {
-  const gradientClasses = {
-    primary: "from-primary/10 to-primary/5",
-    earth: "from-accent/10 to-accent/5",
-    harvest: "from-secondary/10 to-secondary/5",
-  };
-
   const iconClasses = {
     primary: "bg-primary text-primary-foreground",
     earth: "bg-accent text-accent-foreground",
@@ -34,15 +28,9 @@ const StatCard = ({
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card>
       <CardContent className="p-6">
-        <div className={cn(
-          "absolute inset-0 bg-gradient-to-br opacity-50",
-          gradientClasses[gradient]
-        )} />
-        
-        <div className="relative">
-          <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">{title}</p>
               <h3 className="mt-2 text-3xl font-bold text-foreground">{value}</h3>
@@ -68,7 +56,6 @@ const StatCard = ({
               <span className="text-xs text-muted-foreground">vs. mês anterior</span>
             </div>
           )}
-        </div>
       </CardContent>
     </Card>
   );
