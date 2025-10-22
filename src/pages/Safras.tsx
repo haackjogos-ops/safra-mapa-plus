@@ -26,44 +26,7 @@ interface SafrasProps {
 }
 
 const Safras = ({ onMenuClick }: SafrasProps) => {
-  const [safras, setSafras] = useState([
-    {
-      id: 1,
-      cultura: "Soja",
-      variedade: "TMG 7062",
-      area: "150 ha",
-      dataPlantio: "15/10/2024",
-      previsaoColheita: "15/02/2025",
-      fase: "Desenvolvimento Vegetativo",
-      progresso: 45,
-      irrigacao: "Sistema pivô central",
-      proximaAtividade: "Aplicação herbicida"
-    },
-    {
-      id: 2,
-      cultura: "Milho",
-      variedade: "Pioneer 30F53",
-      area: "200 ha",
-      dataPlantio: "20/09/2024",
-      previsaoColheita: "20/01/2025",
-      fase: "Floração",
-      progresso: 65,
-      irrigacao: "Gotejamento",
-      proximaAtividade: "Adubação de cobertura"
-    },
-    {
-      id: 3,
-      cultura: "Arroz",
-      variedade: "IRGA 424",
-      area: "80 ha",
-      dataPlantio: "01/11/2024",
-      previsaoColheita: "01/03/2025",
-      fase: "Estabelecimento",
-      progresso: 25,
-      irrigacao: "Inundação",
-      proximaAtividade: "Controle de plantas daninhas"
-    },
-  ]);
+  const [safras, setSafras] = useState<any[]>([]);
 
   const [selectedSafra, setSelectedSafra] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
