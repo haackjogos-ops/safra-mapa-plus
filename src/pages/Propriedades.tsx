@@ -84,8 +84,8 @@ const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
   return (
     <div className="min-h-screen">
       <Header 
-        title="Propriedades" 
-        subtitle="Gerencie suas propriedades e áreas de plantio"
+        title="Mapas" 
+        subtitle="Mapeamento de áreas e talhões"
         onMenuClick={onMenuClick}
       />
       

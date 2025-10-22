@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
-  { name: "Propriedades", href: "/propriedades", icon: Map },
+  { name: "Mapas", href: "/propriedades", icon: Map },
   { name: "Safras", href: "/safras", icon: Sprout },
   { name: "Tarefas", href: "/tarefas", icon: ClipboardList },
   { name: "Agrônomo", href: "/agronomo", icon: Beaker },
