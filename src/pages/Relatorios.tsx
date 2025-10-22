@@ -1,10 +1,11 @@
 import Header from "@/components/layout/Header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Calendar, DollarSign } from "lucide-react";
+import { BarChart3, TrendingUp, Calendar, DollarSign, Sprout } from "lucide-react";
 import AnnualComparison from "@/components/relatorios/AnnualComparison";
 import QuarterlyComparison from "@/components/relatorios/QuarterlyComparison";
 import HarvestForecast from "@/components/relatorios/HarvestForecast";
+import ConsumptionByCulture from "@/components/insumos/ConsumptionByCulture";
 
 interface RelatoriosProps {
   onMenuClick?: () => void;
@@ -30,7 +31,7 @@ const Relatorios = ({ onMenuClick }: RelatoriosProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-foreground">4</p>
+              <p className="text-2xl font-bold text-foreground">5</p>
               <p className="text-xs text-muted-foreground mt-1">Disponíveis</p>
             </CardContent>
           </Card>
@@ -77,18 +78,22 @@ const Relatorios = ({ onMenuClick }: RelatoriosProps) => {
 
         {/* Tabs de Relatórios */}
         <Tabs defaultValue="anual" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
             <TabsTrigger value="anual" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Comparação Anual
+              <span className="hidden sm:inline">Comparação</span> Anual
             </TabsTrigger>
             <TabsTrigger value="trimestral" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Comparação Trimestral
+              <span className="hidden sm:inline">Comparação</span> Trimestral
             </TabsTrigger>
             <TabsTrigger value="previsao" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
-              Previsão de Colheita
+              <span className="hidden sm:inline">Previsão de</span> Colheita
+            </TabsTrigger>
+            <TabsTrigger value="consumo" className="flex items-center gap-2">
+              <Sprout className="h-4 w-4" />
+              Consumo <span className="hidden sm:inline">por Cultura</span>
             </TabsTrigger>
           </TabsList>
 
@@ -133,6 +138,20 @@ const Relatorios = ({ onMenuClick }: RelatoriosProps) => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="consumo" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Relatório de Consumo por Cultura</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Análise detalhada do consumo de insumos por cultura plantada
+                </p>
+              </CardHeader>
+              <CardContent>
+                <ConsumptionByCulture />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
 
         {/* Informações Adicionais */}
@@ -173,6 +192,18 @@ const Relatorios = ({ onMenuClick }: RelatoriosProps) => {
                 <h4 className="font-semibold text-foreground">Previsão de Colheita</h4>
                 <p className="text-sm text-muted-foreground">
                   Estime a produção e o retorno financeiro de cada safra com base nos preços de mercado atuais. Planeje suas vendas e investimentos.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-primary font-bold">4</span>
+              </div>
+              <div>
+                <h4 className="font-semibold text-foreground">Consumo por Cultura</h4>
+                <p className="text-sm text-muted-foreground">
+                  Analise o consumo de insumos por cultura (soja, milho, arroz, etc.) e compare a eficiência do uso em diferentes plantações.
                 </p>
               </div>
             </div>
