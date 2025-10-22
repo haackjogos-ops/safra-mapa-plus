@@ -1113,10 +1113,7 @@ export type Database = {
           trimestre: number
         }[]
       }
-      update_overdue_tasks: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      update_overdue_tasks: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
