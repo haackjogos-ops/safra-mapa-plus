@@ -236,9 +236,9 @@ const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
       </div>
 
       {/* Dialog para adicionar área */}
-      {currentPolygon && selectedProperty && (
+      {currentPolygon && (
         <AddPlantingAreaDialog
-          propertyId={selectedProperty}
+          properties={properties}
           polygon={currentPolygon}
           onAreaAdded={handleAreaAdded}
           onClose={() => setCurrentPolygon(null)}

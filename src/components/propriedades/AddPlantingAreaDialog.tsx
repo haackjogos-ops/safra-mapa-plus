@@ -1,29 +1,44 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AddPlantingAreaDialogProps {
-  propertyId: string;
+  properties: any[];
   polygon: google.maps.Polygon | null;
   onAreaAdded: () => void;
   onClose: () => void;
 }
 
-const AddPlantingAreaDialog = ({ propertyId, polygon, onAreaAdded, onClose }: AddPlantingAreaDialogProps) => {
-  const [open, setOpen] = useState(!!polygon);
+const AddPlantingAreaDialog = ({ properties, polygon, onAreaAdded, onClose }: AddPlantingAreaDialogProps) => {
+  const [open, setOpen] = useState(true);
+  const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [nome, setNome] = useState("");
   const [cultura, setCultura] = useState("");
   const [areaHectares, setAreaHectares] = useState("");
   const [cor, setCor] = useState("#22c55e");
   const [observacoes, setObservacoes] = useState("");
   const { toast } = useToast();
+
+  // Calcular área automaticamente ao abrir o dialog
+  useEffect(() => {
+    if (polygon && window.google) {
+      const path = polygon.getPath();
+      const areaMeters = window.google.maps.geometry.spherical.computeArea(path);
+      const areaHa = (areaMeters / 10000).toFixed(2);
+      setAreaHectares(areaHa);
+    }
+    
+    // Selecionar a primeira propriedade por padrão
+    if (properties.length > 0) {
+      setSelectedPropertyId(properties[0].id);
+    }
+  }, [polygon, properties]);
 
   const culturas = ["Soja", "Milho", "Arroz", "Fumo", "Mandioca", "Banana"];
   
@@ -37,7 +52,7 @@ const AddPlantingAreaDialog = ({ propertyId, polygon, onAreaAdded, onClose }: Ad
   ];
 
   const handleSubmit = async () => {
-    if (!nome || !cultura || !polygon) {
+    if (!nome || !cultura || !polygon || !selectedPropertyId) {
       toast({
         title: "Campos obrigatórios",
         description: "Preencha todos os campos obrigatórios.",
@@ -58,17 +73,12 @@ const AddPlantingAreaDialog = ({ propertyId, polygon, onAreaAdded, onClose }: Ad
         });
       }
 
-      // Calcular área aproximada se não fornecida
-      let area = parseFloat(areaHectares);
-      if (!area && window.google) {
-        const areaMeters = window.google.maps.geometry.spherical.computeArea(path);
-        area = areaMeters / 10000; // Converter para hectares
-      }
+      const area = parseFloat(areaHectares);
 
       const { error } = await supabase
         .from("planting_areas")
         .insert({
-          property_id: propertyId,
+          property_id: selectedPropertyId,
           nome,
           cultura,
           area_hectares: area,
@@ -99,6 +109,7 @@ const AddPlantingAreaDialog = ({ propertyId, polygon, onAreaAdded, onClose }: Ad
   };
 
   const resetForm = () => {
+    setSelectedPropertyId("");
     setNome("");
     setCultura("");
     setAreaHectares("");
@@ -122,7 +133,23 @@ const AddPlantingAreaDialog = ({ propertyId, polygon, onAreaAdded, onClose }: Ad
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Nome da Área *</Label>
+            <Label>Propriedade *</Label>
+            <Select value={selectedPropertyId} onValueChange={setSelectedPropertyId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a propriedade" />
+              </SelectTrigger>
+              <SelectContent>
+                {properties.map((prop) => (
+                  <SelectItem key={prop.id} value={prop.id}>
+                    {prop.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Nome do Talhão *</Label>
             <Input
               placeholder="Ex: Talhão Norte"
               value={nome}
@@ -145,14 +172,19 @@ const AddPlantingAreaDialog = ({ propertyId, polygon, onAreaAdded, onClose }: Ad
           </div>
 
           <div className="space-y-2">
-            <Label>Área (hectares)</Label>
+            <Label>Área (hectares) *</Label>
             <Input
               type="number"
               step="0.01"
               placeholder="Calculado automaticamente"
               value={areaHectares}
               onChange={(e) => setAreaHectares(e.target.value)}
+              disabled
+              className="bg-muted"
             />
+            <p className="text-xs text-muted-foreground">
+              Área calculada automaticamente com base no desenho
+            </p>
           </div>
 
           <div className="space-y-2">
