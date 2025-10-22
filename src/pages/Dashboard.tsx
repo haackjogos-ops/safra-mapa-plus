@@ -5,9 +5,10 @@ import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { WeatherForecast } from "@/components/dashboard/WeatherForecast";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { Sprout, TrendingUp, DollarSign, Droplets, Search } from "lucide-react";
+import { Sprout, TrendingUp, DollarSign, Droplets, Search, ListTodo, Beaker, Cloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 interface DashboardProps {
   onMenuClick?: () => void;
@@ -49,16 +50,48 @@ const Dashboard = ({ onMenuClick }: DashboardProps) => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       <Header
         title="Dashboard" 
         subtitle="Visão geral da sua produção agrícola"
         onMenuClick={onMenuClick}
       />
       
-      <div className="p-3 md:p-6 space-y-4 md:space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
+        {/* Quick Actions - Mobile App Style */}
+        <div className="grid grid-cols-2 gap-3 md:hidden animate-slide-up">
+          <Link to="/tarefas">
+            <Card className="p-4 text-center gradient-accent hover:scale-105 active:scale-95 transition-all cursor-pointer border-0 shadow-md">
+              <ListTodo className="h-10 w-10 mx-auto mb-2 text-primary" />
+              <p className="font-bold text-sm">Tarefas</p>
+              <p className="text-xs text-muted-foreground">12 pendentes</p>
+            </Card>
+          </Link>
+          <Link to="/safras">
+            <Card className="p-4 text-center gradient-accent hover:scale-105 active:scale-95 transition-all cursor-pointer border-0 shadow-md">
+              <Sprout className="h-10 w-10 mx-auto mb-2 text-primary" />
+              <p className="font-bold text-sm">Safras</p>
+              <p className="text-xs text-muted-foreground">4 ativas</p>
+            </Card>
+          </Link>
+          <Link to="/agronomo">
+            <Card className="p-4 text-center gradient-accent hover:scale-105 active:scale-95 transition-all cursor-pointer border-0 shadow-md">
+              <Beaker className="h-10 w-10 mx-auto mb-2 text-primary" />
+              <p className="font-bold text-sm">Agrônomo</p>
+              <p className="text-xs text-muted-foreground">Controle IA</p>
+            </Card>
+          </Link>
+          <Link to="/clima">
+            <Card className="p-4 text-center gradient-accent hover:scale-105 active:scale-95 transition-all cursor-pointer border-0 shadow-md">
+              <Cloud className="h-10 w-10 mx-auto mb-2 text-primary" />
+              <p className="font-bold text-sm">Clima</p>
+              <p className="text-xs text-muted-foreground">Previsão 5d</p>
+            </Card>
+          </Link>
+        </div>
+
         {/* Stats Cards */}
-        <div className="grid gap-3 md:gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4 animate-slide-up">
           <StatCard
             title="Área Total Plantada"
             value="480 ha"
