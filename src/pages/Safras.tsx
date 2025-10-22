@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,25 +29,82 @@ interface SafrasProps {
 
 const Safras = ({ onMenuClick }: SafrasProps) => {
   const [safras, setSafras] = useState<any[]>([]);
-
   const [selectedSafra, setSelectedSafra] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [safraToDelete, setSafraToDelete] = useState<any>(null);
+  const { toast } = useToast();
 
-  const handleAddSafra = (novaSafra: any) => {
-    const newId = safras.length > 0 ? Math.max(...safras.map(s => s.id)) + 1 : 1;
-    setSafras([...safras, { 
-      id: newId, 
-      ...novaSafra,
-      proximaAtividade: "Monitoramento inicial"
-    }]);
+  useEffect(() => {
+    fetchSafras();
+  }, []);
+
+  const fetchSafras = async () => {
+    const { data, error } = await supabase
+      .from('safras')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      toast({
+        title: "Erro ao carregar safras",
+        description: error.message,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setSafras(data || []);
   };
 
-  const handleDeleteSafra = () => {
-    if (safraToDelete) {
-      setSafras(safras.filter(s => s.id !== safraToDelete.id));
-      setSafraToDelete(null);
+  const handleAddSafra = async (novaSafra: any) => {
+    const { error } = await supabase
+      .from('safras')
+      .insert([{
+        ...novaSafra,
+        proxima_atividade: "Monitoramento inicial"
+      }]);
+
+    if (error) {
+      toast({
+        title: "Erro ao cadastrar safra",
+        description: error.message,
+        variant: "destructive"
+      });
+      return;
     }
+
+    toast({
+      title: "Safra cadastrada",
+      description: "Safra cadastrada com sucesso!"
+    });
+
+    fetchSafras();
+  };
+
+  const handleDeleteSafra = async () => {
+    if (!safraToDelete) return;
+
+    const { error } = await supabase
+      .from('safras')
+      .delete()
+      .eq('id', safraToDelete.id);
+
+    if (error) {
+      toast({
+        title: "Erro ao excluir safra",
+        description: error.message,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Safra excluída",
+      description: "Safra excluída com sucesso!"
+    });
+
+    setSafraToDelete(null);
+    fetchSafras();
   };
 
   const filteredSafras = safras.filter(safra =>
@@ -145,14 +204,14 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
                       <Calendar className="h-3 w-3" />
                       Plantio:
                     </span>
-                    <span className="font-medium text-foreground">{safra.dataPlantio}</span>
+                    <span className="font-medium text-foreground">{safra.data_plantio}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       Colheita:
                     </span>
-                    <span className="font-medium text-foreground">{safra.previsaoColheita}</span>
+                    <span className="font-medium text-foreground">{safra.previsao_colheita}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground flex items-center gap-1">
@@ -178,7 +237,7 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
 
                 <div className="pt-3 border-t border-border">
                   <p className="text-xs font-medium text-muted-foreground mb-1">Próxima Atividade:</p>
-                  <p className="text-sm font-medium text-foreground">{safra.proximaAtividade}</p>
+                  <p className="text-sm font-medium text-foreground">{safra.proxima_atividade}</p>
                 </div>
 
                 <div className="flex gap-2">
@@ -272,11 +331,11 @@ const Safras = ({ onMenuClick }: SafrasProps) => {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Data de Plantio</p>
-                        <p className="font-semibold text-foreground">{selectedSafra.dataPlantio}</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.data_plantio}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Previsão Colheita</p>
-                        <p className="font-semibold text-foreground">{selectedSafra.previsaoColheita}</p>
+                        <p className="font-semibold text-foreground">{selectedSafra.previsao_colheita}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Irrigação</p>

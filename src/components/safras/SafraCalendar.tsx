@@ -39,21 +39,21 @@ const SafraCalendar = ({ safras }: SafraCalendarProps) => {
   
   safras.forEach(safra => {
     eventos.push({
-      date: safra.dataPlantio,
+      date: safra.data_plantio,
       type: "plantio",
       cultura: safra.cultura,
       descricao: `Plantio de ${safra.cultura}`
     });
     
     eventos.push({
-      date: safra.previsaoColheita,
+      date: safra.previsao_colheita,
       type: "colheita",
       cultura: safra.cultura,
       descricao: `Colheita prevista de ${safra.cultura}`
     });
 
     // Adicionar eventos de irrigação e adubação baseados na cultura
-    const dataPlantio = new Date(safra.dataPlantio.split('/').reverse().join('-'));
+    const dataPlantio = new Date(safra.data_plantio.split('/').reverse().join('-'));
     
     if (safra.irrigacao !== "Sequeiro") {
       const irrigacaoDate = new Date(dataPlantio);

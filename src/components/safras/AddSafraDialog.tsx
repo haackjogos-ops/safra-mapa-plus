@@ -66,9 +66,9 @@ const AddSafraDialog = ({ onAdd }: AddSafraDialogProps) => {
     onAdd({
       cultura,
       variedade,
-      area,
-      dataPlantio: format(dataPlantio, "dd/MM/yyyy"),
-      previsaoColheita: format(previsaoColheita, "dd/MM/yyyy"),
+      area: `${area} ha`,
+      data_plantio: format(dataPlantio, "dd/MM/yyyy"),
+      previsao_colheita: format(previsaoColheita, "dd/MM/yyyy"),
       irrigacao,
       fase: "Estabelecimento",
       progresso: 10

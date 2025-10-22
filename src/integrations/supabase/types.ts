@@ -822,6 +822,51 @@ export type Database = {
           },
         ]
       }
+      safras: {
+        Row: {
+          area: string
+          created_at: string
+          cultura: string
+          data_plantio: string
+          fase: string
+          id: string
+          irrigacao: string
+          previsao_colheita: string
+          progresso: number
+          proxima_atividade: string | null
+          updated_at: string
+          variedade: string
+        }
+        Insert: {
+          area: string
+          created_at?: string
+          cultura: string
+          data_plantio: string
+          fase?: string
+          id?: string
+          irrigacao: string
+          previsao_colheita: string
+          progresso?: number
+          proxima_atividade?: string | null
+          updated_at?: string
+          variedade: string
+        }
+        Update: {
+          area?: string
+          created_at?: string
+          cultura?: string
+          data_plantio?: string
+          fase?: string
+          id?: string
+          irrigacao?: string
+          previsao_colheita?: string
+          progresso?: number
+          proxima_atividade?: string | null
+          updated_at?: string
+          variedade?: string
+        }
+        Relationships: []
+      }
       saved_reports: {
         Row: {
           configuracao: Json
