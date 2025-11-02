@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      agronomo_agricultor: {
+        Row: {
+          agricultor_id: string
+          agronomo_id: string
+          ativo: boolean | null
+          created_at: string | null
+          data_vinculo: string | null
+          id: string
+          observacoes: string | null
+        }
+        Insert: {
+          agricultor_id: string
+          agronomo_id: string
+          ativo?: boolean | null
+          created_at?: string | null
+          data_vinculo?: string | null
+          id?: string
+          observacoes?: string | null
+        }
+        Update: {
+          agricultor_id?: string
+          agronomo_id?: string
+          ativo?: boolean | null
+          created_at?: string | null
+          data_vinculo?: string | null
+          id?: string
+          observacoes?: string | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           application_cost: number | null
@@ -495,6 +525,66 @@ export type Database = {
         }
         Relationships: []
       }
+      lavoura_fotos: {
+        Row: {
+          agricultor_id: string
+          created_at: string | null
+          data_envio: string | null
+          descricao: string | null
+          foto_url: string
+          id: string
+          latitude: number | null
+          localizacao: string | null
+          longitude: number | null
+          planting_area_id: string | null
+          safra_id: string | null
+          status: string | null
+        }
+        Insert: {
+          agricultor_id: string
+          created_at?: string | null
+          data_envio?: string | null
+          descricao?: string | null
+          foto_url: string
+          id?: string
+          latitude?: number | null
+          localizacao?: string | null
+          longitude?: number | null
+          planting_area_id?: string | null
+          safra_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          agricultor_id?: string
+          created_at?: string | null
+          data_envio?: string | null
+          descricao?: string | null
+          foto_url?: string
+          id?: string
+          latitude?: number | null
+          localizacao?: string | null
+          longitude?: number | null
+          planting_area_id?: string | null
+          safra_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lavoura_fotos_planting_area_id_fkey"
+            columns: ["planting_area_id"]
+            isOneToOne: false
+            referencedRelation: "planting_areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lavoura_fotos_safra_id_fkey"
+            columns: ["safra_id"]
+            isOneToOne: false
+            referencedRelation: "safras"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       manutencoes: {
         Row: {
           created_at: string
@@ -587,6 +677,39 @@ export type Database = {
           observacoes?: string | null
           preco_medio?: number
           unidade?: string
+        }
+        Relationships: []
+      }
+      notificacoes: {
+        Row: {
+          created_at: string | null
+          id: string
+          lida: boolean | null
+          link: string | null
+          mensagem: string
+          tipo: string
+          titulo: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lida?: boolean | null
+          link?: string | null
+          mensagem: string
+          tipo: string
+          titulo: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lida?: boolean | null
+          link?: string | null
+          mensagem?: string
+          tipo?: string
+          titulo?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -735,6 +858,39 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          cidade: string | null
+          created_at: string | null
+          estado: string | null
+          id: string
+          nome_completo: string
+          telefone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          cidade?: string | null
+          created_at?: string | null
+          estado?: string | null
+          id: string
+          nome_completo: string
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          cidade?: string | null
+          created_at?: string | null
+          estado?: string | null
+          id?: string
+          nome_completo?: string
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       properties: {
         Row: {
           area_total: number | null
@@ -770,6 +926,90 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      recomendacoes: {
+        Row: {
+          agricultor_id: string
+          agronomo_id: string
+          area_aplicacao: string | null
+          created_at: string | null
+          custo_estimado: number | null
+          data_conclusao: string | null
+          data_prevista_execucao: string | null
+          data_recomendacao: string | null
+          descricao: string
+          dosagem: string | null
+          foto_id: string | null
+          id: string
+          observacoes_agricultor: string | null
+          prioridade: string | null
+          produto_recomendado: string | null
+          safra_id: string | null
+          status: string | null
+          tipo: string
+          titulo: string
+          updated_at: string | null
+        }
+        Insert: {
+          agricultor_id: string
+          agronomo_id: string
+          area_aplicacao?: string | null
+          created_at?: string | null
+          custo_estimado?: number | null
+          data_conclusao?: string | null
+          data_prevista_execucao?: string | null
+          data_recomendacao?: string | null
+          descricao: string
+          dosagem?: string | null
+          foto_id?: string | null
+          id?: string
+          observacoes_agricultor?: string | null
+          prioridade?: string | null
+          produto_recomendado?: string | null
+          safra_id?: string | null
+          status?: string | null
+          tipo: string
+          titulo: string
+          updated_at?: string | null
+        }
+        Update: {
+          agricultor_id?: string
+          agronomo_id?: string
+          area_aplicacao?: string | null
+          created_at?: string | null
+          custo_estimado?: number | null
+          data_conclusao?: string | null
+          data_prevista_execucao?: string | null
+          data_recomendacao?: string | null
+          descricao?: string
+          dosagem?: string | null
+          foto_id?: string | null
+          id?: string
+          observacoes_agricultor?: string | null
+          prioridade?: string | null
+          produto_recomendado?: string | null
+          safra_id?: string | null
+          status?: string | null
+          tipo?: string
+          titulo?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recomendacoes_foto_id_fkey"
+            columns: ["foto_id"]
+            isOneToOne: false
+            referencedRelation: "lavoura_fotos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recomendacoes_safra_id_fkey"
+            columns: ["safra_id"]
+            isOneToOne: false
+            referencedRelation: "safras"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       routes: {
         Row: {
@@ -1126,6 +1366,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1158,10 +1419,17 @@ export type Database = {
           trimestre: number
         }[]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       update_overdue_tasks: { Args: never; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "agronomo" | "agricultor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1288,6 +1556,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["agronomo", "agricultor"],
+    },
   },
 } as const
