@@ -24,6 +24,9 @@ import Financeiro from "./pages/Financeiro";
 import Equipamentos from "./pages/Equipamentos";
 import Clima from "./pages/Clima";
 import NotFound from "./pages/NotFound";
+import Consultoria from "./pages/Consultoria";
+import Admin from "./pages/Admin";
+import AccessDenied from "./pages/AccessDenied";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +74,9 @@ const App = () => {
                           <Route path="/agricultor" element={<DashboardAgricultor onMenuClick={() => setMobileMenuOpen(true)} />} />
                           <Route path="/minhas-fotos" element={<MinhasFotos onMenuClick={() => setMobileMenuOpen(true)} />} />
                           <Route path="/minhas-recomendacoes" element={<MinhasRecomendacoes onMenuClick={() => setMobileMenuOpen(true)} />} />
+                          <Route path="/consultoria" element={<Consultoria />} />
+                          <Route path="/admin" element={<Admin />} />
+                          <Route path="/403" element={<AccessDenied />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </main>

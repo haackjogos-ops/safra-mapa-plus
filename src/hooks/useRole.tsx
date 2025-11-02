@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
-export type AppRole = 'agronomo' | 'agricultor';
+export type AppRole = 'agronomo' | 'agricultor' | 'suporte' | 'admin';
 
 export const useRole = () => {
   const { user } = useAuth();

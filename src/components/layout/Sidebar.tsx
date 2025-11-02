@@ -1,22 +1,39 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Map, Sprout, ClipboardList, BarChart3, Package, DollarSign, Tractor, Beaker, Cloud } from "lucide-react";
+import { Home, Map, Sprout, ClipboardList, BarChart3, Package, DollarSign, Tractor, Beaker, Cloud, BookOpen, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navigation = [
-  { name: "Dashboard", href: "/", icon: Home },
-  { name: "Mapas", href: "/propriedades", icon: Map },
-  { name: "Safras", href: "/safras", icon: Sprout },
-  { name: "Tarefas", href: "/tarefas", icon: ClipboardList },
-  { name: "Agrônomo", href: "/agronomo", icon: Beaker },
-  { name: "Clima", href: "/clima", icon: Cloud },
-  { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
-  { name: "Insumos", href: "/insumos", icon: Package },
-  { name: "Financeiro", href: "/financeiro", icon: DollarSign },
-  { name: "Equipamentos", href: "/equipamentos", icon: Tractor },
-];
+import { useRole } from "@/hooks/useRole";
 
 const Sidebar = () => {
   const location = useLocation();
+  const { isAgronomo, isAgricultor, hasRole } = useRole();
+
+  const baseNavigation = [
+    { name: "Dashboard", href: "/", icon: Home },
+    { name: "Mapas", href: "/propriedades", icon: Map },
+    { name: "Safras", href: "/safras", icon: Sprout },
+    { name: "Tarefas", href: "/tarefas", icon: ClipboardList },
+    { name: "Clima", href: "/clima", icon: Cloud },
+    { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
+    { name: "Insumos", href: "/insumos", icon: Package },
+    { name: "Financeiro", href: "/financeiro", icon: DollarSign },
+    { name: "Equipamentos", href: "/equipamentos", icon: Tractor },
+  ];
+
+  const roleNavigation: Array<{ name: string; href: string; icon: any }> = [];
+
+  if (isAgronomo) {
+    roleNavigation.push({ name: "Agrônomo", href: "/agronomo", icon: Beaker });
+  }
+
+  if (isAgricultor || isAgronomo) {
+    roleNavigation.push({ name: "Consultoria", href: "/consultoria", icon: BookOpen });
+  }
+
+  if (hasRole('suporte' as any)) {
+    roleNavigation.push({ name: "Admin", href: "/admin", icon: Shield });
+  }
+
+  const navigation = [...baseNavigation, ...roleNavigation];
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar border-r border-sidebar-border">
