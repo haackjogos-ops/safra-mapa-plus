@@ -23,5 +23,9 @@ export const usePageAccess = (pagePath: string) => {
       return data as boolean;
     },
     enabled: !!user,
+    staleTime: 5 * 60 * 1000, // 5 minutos
+    gcTime: 10 * 60 * 1000, // 10 minutos
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
