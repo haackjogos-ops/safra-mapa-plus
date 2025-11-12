@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          page_path: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          page_path: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          page_path?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       agronomo_agricultor: {
         Row: {
           agricultor_id: string
@@ -764,6 +794,36 @@ export type Database = {
         }
         Relationships: []
       }
+      page_permissions: {
+        Row: {
+          allowed_roles: Database["public"]["Enums"]["app_role"][]
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          page_name: string
+          page_path: string
+        }
+        Insert: {
+          allowed_roles?: Database["public"]["Enums"]["app_role"][]
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          page_name: string
+          page_path: string
+        }
+        Update: {
+          allowed_roles?: Database["public"]["Enums"]["app_role"][]
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          page_name?: string
+          page_path?: string
+        }
+        Relationships: []
+      }
       planned_purchases: {
         Row: {
           created_at: string
@@ -1392,6 +1452,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_add_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      admin_remove_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       calculate_balance: {
         Args: { end_date: string; start_date: string }
         Returns: {
@@ -1399,6 +1473,10 @@ export type Database = {
           total_despesas: number
           total_receitas: number
         }[]
+      }
+      can_access_page: {
+        Args: { _page_path: string; _user_id: string }
+        Returns: boolean
       }
       get_annual_comparison: {
         Args: { year_end: number; year_start: number }
