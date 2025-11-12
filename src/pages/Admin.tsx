@@ -7,9 +7,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { ManageUserDialog } from '@/components/admin/ManageUserDialog';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('users');
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [manageDialogOpen, setManageDialogOpen] = useState(false);
 
   // Buscar todos os usuários e roles
   const { data: users, refetch } = useQuery({
@@ -169,7 +172,14 @@ const Admin = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setManageDialogOpen(true);
+                          }}
+                        >
                           Gerenciar
                         </Button>
                       </TableCell>
@@ -229,6 +239,13 @@ const Admin = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <ManageUserDialog
+        user={selectedUser}
+        open={manageDialogOpen}
+        onOpenChange={setManageDialogOpen}
+        onUpdate={refetch}
+      />
     </div>
   );
 };
