@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import MapComponent from "@/components/propriedades/MapComponent";
 import AddPlantingAreaDialog from "@/components/propriedades/AddPlantingAreaDialog";
 import DeletePropertyButton from "@/components/propriedades/DeletePropertyButton";
+import { AddPropertyDialog } from "@/components/propriedades/AddPropertyDialog";
 
 interface PropriedadesProps {
   onMenuClick?: () => void;
@@ -21,6 +22,7 @@ const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
   const [drawingMode, setDrawingMode] = useState(false);
   const [currentPolygon, setCurrentPolygon] = useState<google.maps.Polygon | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
+  const [propertyDialogOpen, setPropertyDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -103,6 +105,14 @@ const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
             />
           </div>
           <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setPropertyDialogOpen(true)}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Nova Propriedade
+            </Button>
             <Button 
               variant={drawingMode ? "default" : "outline"}
               onClick={() => setDrawingMode(!drawingMode)}
@@ -228,9 +238,11 @@ const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
                       </p>
                     )}
                   </CardContent>
-                </Card>
-              ))}
-            </div>
+            </Card>
+            ))}
+          </div>
+        )}
+      )}
           </div>
         )}
       </div>
