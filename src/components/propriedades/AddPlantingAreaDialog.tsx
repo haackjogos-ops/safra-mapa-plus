@@ -7,15 +7,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Plus } from "lucide-react";
 
 interface AddPlantingAreaDialogProps {
   properties: any[];
   polygon: google.maps.Polygon | null;
   onAreaAdded: () => void;
   onClose: () => void;
+  onOpenPropertyDialog: () => void;
 }
 
-const AddPlantingAreaDialog = ({ properties, polygon, onAreaAdded, onClose }: AddPlantingAreaDialogProps) => {
+const AddPlantingAreaDialog = ({ properties, polygon, onAreaAdded, onClose, onOpenPropertyDialog }: AddPlantingAreaDialogProps) => {
   const [open, setOpen] = useState(true);
   const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [nome, setNome] = useState("");
