@@ -241,10 +241,8 @@ const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
             </Card>
             ))}
           </div>
-        )}
+        </div>
       )}
-          </div>
-        )}
       </div>
 
       {/* Dialog para adicionar área */}
@@ -254,6 +252,7 @@ const Propriedades = ({ onMenuClick }: PropriedadesProps) => {
           polygon={currentPolygon}
           onAreaAdded={handleAreaAdded}
           onClose={() => setCurrentPolygon(null)}
+          onOpenPropertyDialog={() => setPropertyDialogOpen(true)}
         />
       )}
     </div>
